@@ -1,0 +1,95 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ shoe.shoe_name }} - Redstore</title>
+    <link rel="stylesheet" href="{% static 'web/css/style.css' %}">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <!-- ...header/navbar code... -->
+    <div class="small-container single-product">
+        <div class="row">
+            <div class="col-2">
+                <img src="{{ shoe.get_image }}" width="100%" id="productImg">
+                <!-- Optional: Gallery of images if you have them -->
+            </div>
+            <div class="col-2">
+                <p>Home / Shoes</p>
+                <h1>{{ shoe.shoe_name }}</h1>
+                <h4>${{ shoe.original_price }}</h4>
+                <form method="post" action="{% url 'add_to_cart' sku=shoe.sku %}">
+                    {% csrf_token %}
+                    <select name="size" required>
+                        <option value="">Select Size</option>
+                        {% for size in available_sizes %}
+                            <option value="{{ size }}">{{ size }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="number" name="quantity" value="1" min="1">
+                    <button type="submit" class="btn">Add to Cart</button>
+                </form>
+                <h3>Product Details <i class="fa fa-indent"></i></h3>
+                <br>
+                <p>{{ shoe.description }}</p>
+            </div>
+        </div>
+    </div>
+    <!-- ...rest of your page... -->
+    <div class="footer">
+        <div class="container">
+            <div class="footer-row">
+                <img src="{% static 'web/images/logo.png' %}" alt="Logo" class="footer-logo">
+                <!-- ...social links... -->
+            </div>
+            <hr>
+            <p class="copyright">Capstone Project Intro to Software - IT3180E</p>
+        </div>
+    </div>
+    <!-- ...scripts... -->
+</body>
+</html>
+        
+        
+        <!-----------------------------------js for toggle menu----------------------------------------------->
+        <script>
+            var menuItems=document.getElementById("MenuItems");
+            
+            MenuItems.style.maxHeight="0px";
+            function menutoggle(){
+                if(MenuItems.style.maxHeight == "0px"){
+                    MenuItems.style.maxHeight="200px";
+                }
+                else{
+                    MenuItems.style.maxHeight="0px";
+                }
+            }
+        </script>
+        
+        <!-----------------------js for product gallery-------------------->
+        
+        <script>
+            var productImg=document.getElementById("productImg");
+            var smallImg=document.getElementsByClassName("small-img");
+            
+            smallImg[0].onclick=function(){
+                productImg.src=smallImg[0].src;
+            }
+             smallImg[1].onclick=function(){
+                productImg.src=smallImg[1].src;
+            }
+              smallImg[2].onclick=function(){
+                productImg.src=smallImg[2].src;
+            }
+               smallImg[3].onclick=function(){
+                productImg.src=smallImg[3].src;
+            }
+            
+            
+        </script>
+    </body>
+</html>

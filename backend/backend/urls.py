@@ -18,16 +18,20 @@ from django.contrib import admin
 from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
-from web.views import home, ProductList, CartDetail, AddToCart, RemoveFromCart
+from web.views import products, shoe_detail, home, add_to_cart, remove_from_cart, view_cart
+from django.contrib.auth import views as auth_views
+from django.views.generic import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/',include('djoser.urls')),
     path('api/v1/',include('djoser.urls.authtoken')),
-    path('api/v1/', include('web.urls')),
+    path('', include('web.urls')),
+    path('products/', products, name='products'),
+    path('products-details/<str:sku>/', shoe_detail, name='shoe_detail'),
     path('', home, name='home'),
-    path('products/', ProductList.as_view()),
-    path('cart/', CartDetail.as_view()),
-    path('cart/add/', AddToCart.as_view()),
-    path('cart/remove/', RemoveFromCart.as_view())
+    path('cart', view_cart, name='cart'),
+    path('cart/add/<str:sku>/', add_to_cart, name='add_to_cart'),
+    path('cart/remove/<str:sku>/', remove_from_cart, name='remove_from_cart'),
+    path('accounts/login/', auth_views.LoginView.as_view(template_name='login.html'), name='login')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
