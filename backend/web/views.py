@@ -13,7 +13,7 @@ from django.shortcuts import render, redirect
 
 
 def products(request):
-    shoes = Product.objects.all()
+    shoes = Product.objects.filter(in_stock__gt=0)
     return render(request, 'products.html', {'shoes': shoes})
 
 def shoe_detail(request, sku):
@@ -30,14 +30,13 @@ def shoe_detail(request, sku):
 
 def home(request):
     # Get 4 featured products (customize the filter as needed)
-    featured_products = Product.objects.all()[:4]
+    featured_products = Product.objects.filter(in_stock__gt=0)[:4]
     # Get 4 latest products (ordered by id or created_at)
-    latest_products = Product.objects.order_by('-sku')[:8]
+    latest_products = Product.objects.filter(in_stock__gt=0).order_by('-sku')[:8]
     return render(request, 'index.html', {
         'featured_products': featured_products,
         'latest_products': latest_products,
     })
-
 @login_required
 def add_to_cart(request, sku):
     product = get_object_or_404(Product, sku=sku)
@@ -46,27 +45,27 @@ def add_to_cart(request, sku):
 
     quantity = int(request.POST.get('quantity', 1))
 
-    if product.in_stock is None or product.in_stock < quantity:
-        messages.error(request, "Sản phẩm không còn đủ hàng trong kho.")
+    # Check if product is out of stock
+    if not product.in_stock or product.in_stock < quantity:
+        messages.error(request, "Sản phẩm đã hết hàng hoặc không đủ số lượng trong kho.")
         return redirect('shoe_detail', sku=sku)
 
-    # Trừ vào tồn kho
+    # Subtract from stock
     product.in_stock -= quantity
     product.save()
 
-    # Tạo hoặc cập nhật cart item
+    # Add or update cart item
     cart_item, created = CartItem.objects.get_or_create(
         cart=cart,
         product=product,
-        size="N/A",  # size không quan trọng nữa
+        size="N/A",
         defaults={'quantity': quantity}
     )
-
     if not created:
         cart_item.quantity += quantity
         cart_item.save()
 
-    messages.success(request, "Đã thêm sản phẩm vào giỏ hàng.")
+    # messages.success(request, "Đã thêm sản phẩm vào giỏ hàng.")
     return redirect('cart')
 
 @login_required
@@ -76,6 +75,9 @@ def remove_from_cart(request, sku):
     if cart:
         cart_item = CartItem.objects.filter(cart=cart, product=product).first()
         if cart_item:
+            # Cộng lại số lượng vào kho
+            product.in_stock += cart_item.quantity
+            product.save()
             cart_item.delete()
     return redirect('cart')
 
@@ -85,3 +87,44 @@ def view_cart(request):
     items = CartItem.objects.filter(cart=cart) if cart else []
     return render(request, 'cart.html', {'cart': cart, 'items': items})
 
+@login_required
+def add_to_cart(request, sku):
+    product = get_object_or_404(Product, sku=sku)
+    user = request.user
+    cart, created = Cart.objects.get_or_create(user=user, is_completed=False)
+
+    quantity = int(request.POST.get('quantity', 1))
+
+    # Check if product is out of stock
+    if not product.in_stock or product.in_stock < quantity:
+        messages.error(request, "Sản phẩm đã hết hàng hoặc không đủ số lượng trong kho.")
+        return redirect('shoe_detail', sku=sku)
+
+    # Subtract from stock
+    product.in_stock -= quantity
+    product.save()
+
+    # Add or update cart item
+    cart_item, created = CartItem.objects.get_or_create(
+        cart=cart,
+        product=product,
+        size="N/A",
+        defaults={'quantity': quantity}
+    )
+    if not created:
+        cart_item.quantity += quantity
+        cart_item.save()
+
+    messages.success(request, "Đã thêm sản phẩm vào giỏ hàng.")
+    return redirect('cart')
+
+def search_products(request):
+    query = request.GET.get('q', '').strip()
+    shoes = Product.objects.filter(in_stock__gt=0)
+    if query:
+        shoes = shoes.filter(
+            Q(shoe_name__icontains=query) |
+            Q(brand__icontains=query) |
+            Q(color__icontains=query)
+        )
+    return render(request, 'products.html', {'shoes': shoes, 'search_query': query})

@@ -24,10 +24,10 @@
                         <li><a href="{% url 'products' %}" class="btn">Kids</a></li>
                     </ul>
                 </nav>
-                <div class="search-bar">
-                    <input type="text" placeholder="Search for products..." />
+                <form class="search-bar" method="get" action="{% url 'search_products' %}">
+                    <input type="text" name="q" placeholder="Search for products..." value="{{ search_query|default:'' }}">
                     <button type="submit" class="btn"><i class="fa fa-search"></i></button>
-                </div>
+                </form>
                 <a href="{% url 'cart' %}" ><img src="{% static 'web/images/cart.png' %}" width="30px" height="30px"></a>
                 <img src="{% static 'web/images/menu.png' %}" class="menu-icon" onClick="menutoggle()" >
             </div>

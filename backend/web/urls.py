@@ -12,7 +12,7 @@
 # ]
 
 from django.urls import path
-from .views import products, shoe_detail, home, add_to_cart, remove_from_cart, view_cart
+from .views import products, shoe_detail, home, add_to_cart, remove_from_cart, view_cart, search_products
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
@@ -22,5 +22,6 @@ urlpatterns = [
     path('cart', view_cart, name='cart'),
     path('cart/add/<str:sku>/', add_to_cart, name='add_to_cart'),
     path('cart/remove/<str:sku>/', remove_from_cart, name='remove_from_cart'),
-    path('accounts/login/', auth_views.LoginView.as_view(template_name='login.html'), name='login')
+    path('accounts/login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
+    path('search/', search_products, name='search_products'),
 ]
