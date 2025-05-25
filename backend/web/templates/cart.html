@@ -1,5 +1,6 @@
 {% load static %}
 {% load cart_extras %}
+{% load humanize %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -46,13 +47,13 @@
                         <img src="{{ item.product.get_image }}" alt="{{ item.product.shoe_name }}">
                         <div>
                             <p>{{ item.product.shoe_name }}</p>
-                            <small>Price: ${{ item.product.original_price }}</small><br>
+                            <small>Price: {{ item.product.original_price|intcomma }} VNĐ</small><br>
                             <a href="{% url 'remove_from_cart' sku=item.product.sku %}">Remove</a>
                         </div>
                     </div>
                 </td>
                 <td>{{ item.quantity }}</td>
-                <td>${{ item.quantity|multiply:item.product.original_price }}</td>
+                <td>{{ item.quantity|multiply:item.product.original_price|intcomma }} VNĐ</td>
             </tr>
             {% empty %}
             <tr>
@@ -66,7 +67,7 @@
                 <tr>
                     <td>Subtotal</td>
                     <td>
-                        ${{ items|calc_subtotal }}
+                        {{ items|calc_subtotal|intcomma }} VNĐ
                     </td>
                 </tr>
                 <!-- Add tax and total if needed -->

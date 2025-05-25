@@ -1,4 +1,5 @@
 {% load static %}
+{% load humanize %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,6 +12,31 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
+    <!-- Header giống aboutus.html -->
+    <div class="header">
+        <div class="container">
+            <div class="navbar">
+                <div class="logo">
+                    <a href="{% url 'products' %}"><img src="{% static 'web/images/logo.png' %}" width="125px"></a>
+                </div>
+                <nav>
+                    <ul id="MenuItems">
+                        <li><a href="{% url 'products' %}" class="btn">Men</a></li>
+                        <li><a href="{% url 'products' %}" class="btn">Women</a></li>
+                        <li><a href="{% url 'products' %}" class="btn">Kids</a></li>
+                        <li><a href="{% url 'aboutus' %}" class="btn">About Us</a></li>
+                    </ul>
+                </nav>
+                <form class="search-bar" method="get" action="{% url 'search_products' %}">
+                    <input type="text" name="q" placeholder="Search for products..." value="{{ search_query|default:'' }}">
+                    <button type="submit" class="btn"><i class="fa fa-search"></i></button>
+                </form>
+                <a href="{% url 'cart' %}"><img src="{% static 'web/images/cart.png' %}" width="30px" height="30px"></a>
+                <img src="{% static 'web/images/menu.png' %}" class="menu-icon" onClick="menutoggle()" >
+            </div>
+        </div>
+    </div>
+
     {% if messages %}
     <ul class="messages">
         {% for message in messages %}
@@ -18,17 +44,21 @@
         {% endfor %}
     </ul>
     {% endif %}
-    <!-- ...header/navbar code... -->
+
     <div class="small-container single-product">
         <div class="row">
             <div class="col-2">
                 <img src="{{ shoe.get_image }}" width="100%" id="productImg">
-                <!-- Optional: Gallery of images if you have them -->
+                <div class="img-row">
+                    {% for img in image_list %}
+                        <img src="{{ img }}" width="60" class="small-img" style="margin:5px;cursor:pointer;">
+                    {% endfor %}
+                </div>
             </div>
             <div class="col-2">
                 <p>Home / Shoes</p>
                 <h1>{{ shoe.shoe_name }}</h1>
-                <h4>${{ shoe.original_price }}</h4>
+                <h4>{{ shoe.original_price|intcomma }} VNĐ</h4>
                 <form method="post" action="{% url 'add_to_cart' sku=shoe.sku %}">
                     {% csrf_token %}
                     <select name="size" required>
@@ -46,57 +76,69 @@
             </div>
         </div>
     </div>
-    <!-- ...rest of your page... -->
+
+    <!-- Related Products Section (chỉ 1 lần, đặt ở cuối) -->
+    <div class="small-container">
+        <h2 class="title">Related Products</h2>
+        <div class="row">
+            {% for prod in related_products %}
+            <div class="col-4">
+                <a href="{{ prod.get_absolute_url }}">
+                    <img src="{{ prod.get_image }}" alt="{{ prod.shoe_name }}">
+                </a>
+                <a href="{{ prod.get_absolute_url }}"><h4>{{ prod.shoe_name }}</h4></a>
+                <div class="rating">
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star-half-o"></i>
+                    <i class="fa fa-star-o"></i>
+                </div>
+                <p>{{ prod.original_price|intcomma }} VNĐ</p>
+            </div>
+            {% empty %}
+            <p>No related products found.</p>
+            {% endfor %}    
+        </div>
+    </div>
+
+    <!-- Footer -->
     <div class="footer">
         <div class="container">
             <div class="footer-row">
                 <img src="{% static 'web/images/logo.png' %}" alt="Logo" class="footer-logo">
-                <!-- ...social links... -->
+                <ul class="footer-social">
+                    <a href="https://www.facebook.com/"><li><strong>Facebook</strong></li></a>
+                    <a href="https://www.instagram.com/"><li><strong>Instagram</strong></li></a>
+                    <a href="https://x.com/"><li><strong>X</strong></li></a>
+                    <a href="https://www.youtube.com/"><li><strong>Youtube</strong></li></a>  
+                </ul>
             </div>
             <hr>
             <p class="copyright">Capstone Project Intro to Software - IT3180E</p>
         </div>
     </div>
-    <!-- ...scripts... -->
+
+    <!-- JS -->
+    <script>
+        var menuItems=document.getElementById("MenuItems");
+        menuItems.style.maxHeight="0px";
+        function menutoggle(){
+            if(menuItems.style.maxHeight == "0px"){
+                menuItems.style.maxHeight="200px";
+            }
+            else{
+                menuItems.style.maxHeight="0px";
+            }
+        }
+        // Product gallery
+        var productImg = document.getElementById("productImg");
+        var smallImg = document.getElementsByClassName("small-img");
+        for (let i = 0; i < smallImg.length; i++) {
+            smallImg[i].onclick = function() {
+                productImg.src = this.src;
+            }
+        }
+    </script>
 </body>
-</html>
-        
-        
-        <!-----------------------------------js for toggle menu----------------------------------------------->
-        <script>
-            var menuItems=document.getElementById("MenuItems");
-            
-            MenuItems.style.maxHeight="0px";
-            function menutoggle(){
-                if(MenuItems.style.maxHeight == "0px"){
-                    MenuItems.style.maxHeight="200px";
-                }
-                else{
-                    MenuItems.style.maxHeight="0px";
-                }
-            }
-        </script>
-        
-        <!-----------------------js for product gallery-------------------->
-        
-        <script>
-            var productImg=document.getElementById("productImg");
-            var smallImg=document.getElementsByClassName("small-img");
-            
-            smallImg[0].onclick=function(){
-                productImg.src=smallImg[0].src;
-            }
-             smallImg[1].onclick=function(){
-                productImg.src=smallImg[1].src;
-            }
-              smallImg[2].onclick=function(){
-                productImg.src=smallImg[2].src;
-            }
-               smallImg[3].onclick=function(){
-                productImg.src=smallImg[3].src;
-            }
-            
-            
-        </script>
-    </body>
 </html>

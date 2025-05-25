@@ -26,7 +26,19 @@ def shoe_detail(request, sku):
         available_sizes = [size.strip().strip("'").strip('"') for size in sizes if size.strip()]
     else:
         available_sizes = []
-    return render(request, 'products-details.html', {'shoe': shoe, 'available_sizes': available_sizes})
+    
+    image_list = []
+    if shoe.image_urls:
+        image_list = [img.strip().strip("'").strip('"') for img in shoe.image_urls.strip("[]").split(",") if img.strip()]
+    related_products = Product.objects.filter(brand=shoe.brand, in_stock__gt=0).exclude(sku=shoe.sku)[:4]
+
+    return render(request, 'products-details.html', {
+        'shoe': shoe,
+        'available_sizes': available_sizes,
+        'image_list': image_list,
+        'related_products': related_products,
+    })
+
 
 def home(request):
     # Get 4 featured products (customize the filter as needed)
@@ -37,36 +49,6 @@ def home(request):
         'featured_products': featured_products,
         'latest_products': latest_products,
     })
-@login_required
-def add_to_cart(request, sku):
-    product = get_object_or_404(Product, sku=sku)
-    user = request.user
-    cart, created = Cart.objects.get_or_create(user=user, is_completed=False)
-
-    quantity = int(request.POST.get('quantity', 1))
-
-    # Check if product is out of stock
-    if not product.in_stock or product.in_stock < quantity:
-        messages.error(request, "Sản phẩm đã hết hàng hoặc không đủ số lượng trong kho.")
-        return redirect('shoe_detail', sku=sku)
-
-    # Subtract from stock
-    product.in_stock -= quantity
-    product.save()
-
-    # Add or update cart item
-    cart_item, created = CartItem.objects.get_or_create(
-        cart=cart,
-        product=product,
-        size="N/A",
-        defaults={'quantity': quantity}
-    )
-    if not created:
-        cart_item.quantity += quantity
-        cart_item.save()
-
-    # messages.success(request, "Đã thêm sản phẩm vào giỏ hàng.")
-    return redirect('cart')
 
 @login_required
 def remove_from_cart(request, sku):
@@ -115,7 +97,7 @@ def add_to_cart(request, sku):
         cart_item.quantity += quantity
         cart_item.save()
 
-    messages.success(request, "Đã thêm sản phẩm vào giỏ hàng.")
+    # messages.success(request, "Đã thêm sản phẩm vào giỏ hàng.")
     return redirect('cart')
 
 def search_products(request):
@@ -128,3 +110,6 @@ def search_products(request):
             Q(color__icontains=query)
         )
     return render(request, 'products.html', {'shoes': shoes, 'search_query': query})
+
+def about_us(request):
+    return render(request, 'web/aboutus.html')

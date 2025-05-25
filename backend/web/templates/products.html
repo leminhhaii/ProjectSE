@@ -1,4 +1,5 @@
 {% load static %}
+{% load humanize %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -35,6 +36,7 @@
                         <li><a href="{% url 'products' %}" class="btn">Men</a></li>
                         <li><a href="{% url 'products' %}" class="btn">Women</a></li>
                         <li><a href="{% url 'products' %}" class="btn">Kids</a></li>
+                        <li><a href="{% url 'aboutus' %}" class="btn">About Us</a></li>
                     </ul>
                 </nav>
                 <form class="search-bar" method="get" action="{% url 'search_products' %}">
@@ -73,7 +75,7 @@
                     <i class="fa fa-star-half-o"></i>
                     <i class="fa fa-star-o"></i>
                 </div>
-                <p>${{ shoe.original_price }}</p>
+                <p>{{ shoe.original_price|intcomma }} VNĐ</p>
             </div>
             {% empty %}
             <p>No products available.</p>
