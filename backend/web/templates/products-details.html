@@ -17,22 +17,22 @@
         <div class="container">
             <div class="navbar">
                 <div class="logo">
-                    <a href="{% url 'products' %}"><img src="{% static 'web/images/logo.png' %}" width="125px"></a>
+                    <a href="{% url 'home' %}"><img src="{% static 'web/images/logo.png' %}" width="125px"></a>
                 </div>
                 <nav>
                     <ul id="MenuItems">
                         <li><a href="{% url 'products' %}" class="btn">Men</a></li>
                         <li><a href="{% url 'products' %}" class="btn">Women</a></li>
                         <li><a href="{% url 'products' %}" class="btn">Kids</a></li>
-                        <li><a href="{% url 'aboutus' %}" class="btn">About Us</a></li>
+                        <li><a href="{% url 'aboutus' %}"class="btn">About Us</a></li>
                     </ul>
                 </nav>
                 <form class="search-bar" method="get" action="{% url 'search_products' %}">
                     <input type="text" name="q" placeholder="Search for products..." value="{{ search_query|default:'' }}">
                     <button type="submit" class="btn"><i class="fa fa-search"></i></button>
                 </form>
-                <a href="{% url 'cart' %}"><img src="{% static 'web/images/cart.png' %}" width="30px" height="30px"></a>
-                <img src="{% static 'web/images/menu.png' %}" class="menu-icon" onClick="menutoggle()" >
+                <a href="{% url 'cart' %}" class="btn" id="cart-btn"><img src="{% static 'web/images/cart.png' %}" width="30px" height="30px"></a>
+                <img src="{% static 'web/images/menu.png' %}" class="menu-icon" onClick="menutoggle()">
             </div>
         </div>
     </div>
@@ -46,7 +46,7 @@
     {% endif %}
 
     <div class="small-container single-product">
-        <div class="row">
+        <div class="row" style="justify-content: flex-start; text-align: left;">
             <div class="col-2">
                 <img src="{{ shoe.get_image }}" width="100%" id="productImg">
                 <div class="img-row">
@@ -56,7 +56,6 @@
                 </div>
             </div>
             <div class="col-2">
-                <p>Home / Shoes</p>
                 <h1>{{ shoe.shoe_name }}</h1>
                 <h4>{{ shoe.original_price|intcomma }} VNĐ</h4>
                 <form method="post" action="{% url 'add_to_cart' sku=shoe.sku %}">
@@ -76,10 +75,13 @@
             </div>
         </div>
     </div>
-
     <!-- Related Products Section (chỉ 1 lần, đặt ở cuối) -->
     <div class="small-container">
-        <h2 class="title">Related Products</h2>
+        <div class="row row-2">
+            <h2>Related Products</h2>
+            <!-- <h2 class="title">Related Products</h2> -->
+            <a href="{% url 'products' %}"><p>View More</p></a>
+        </div>
         <div class="row">
             {% for prod in related_products %}
             <div class="col-4">
@@ -87,13 +89,6 @@
                     <img src="{{ prod.get_image }}" alt="{{ prod.shoe_name }}">
                 </a>
                 <a href="{{ prod.get_absolute_url }}"><h4>{{ prod.shoe_name }}</h4></a>
-                <div class="rating">
-                    <i class="fa fa-star"></i>
-                    <i class="fa fa-star"></i>
-                    <i class="fa fa-star"></i>
-                    <i class="fa fa-star-half-o"></i>
-                    <i class="fa fa-star-o"></i>
-                </div>
                 <p>{{ prod.original_price|intcomma }} VNĐ</p>
             </div>
             {% empty %}
@@ -102,16 +97,26 @@
         </div>
     </div>
 
+    
     <!-- Footer -->
     <div class="footer">
         <div class="container">
             <div class="footer-row">
-                <img src="{% static 'web/images/logo.png' %}" alt="Logo" class="footer-logo">
+                <img src= "{% static 'web/images/logo.png' %}" alt="Logo" class="footer-logo">
+
                 <ul class="footer-social">
-                    <a href="https://www.facebook.com/"><li><strong>Facebook</strong></li></a>
-                    <a href="https://www.instagram.com/"><li><strong>Instagram</strong></li></a>
-                    <a href="https://x.com/"><li><strong>X</strong></li></a>
-                    <a href="https://www.youtube.com/"><li><strong>Youtube</strong></li></a>  
+                    <a href="https://www.facebook.com/">
+                        <li><strong>Facebook</strong></li>
+                    </a>
+                    <a href="https://www.instagram.com/">
+                        <li><strong>Instagram</strong></li>
+                    </a>
+                    <a href="https://x.com/">
+                        <li><strong>X</strong></li>
+                    </a>
+                    <a href="https://www.youtube.com/">
+                        <li><strong>Youtube</strong></li>
+                    </a>
                 </ul>
             </div>
             <hr>

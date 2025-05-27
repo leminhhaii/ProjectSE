@@ -15,6 +15,7 @@ from django.urls import path
 from .views import products, shoe_detail, home, add_to_cart, remove_from_cart, view_cart, search_products
 from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
+from . import views
 
 urlpatterns = [
     path('products/', products, name='products'),

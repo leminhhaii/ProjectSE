@@ -11,40 +11,28 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
-<style>
-    .search-bar .btn {
-        padding: 4px 10px;
-        font-size: 14px;
-        height: 32px;
-        width: 32px;
-        min-width: unset;
-    }
-    .search-bar input[type="text"] {
-        height: 32px;
-        font-size: 14px;
-    }
-</style>
+
 <body>
     <div class="header">
         <div class="container">
             <div class="navbar">
                 <div class="logo">
-                    <a href="{% url 'products' %}"><img src="{% static 'web/images/logo.png' %}" width="125px"></a>
+                    <a href="{% url 'home' %}"><img src="{% static 'web/images/logo.png' %}" width="125px"></a>
                 </div>
                 <nav>
                     <ul id="MenuItems">
                         <li><a href="{% url 'products' %}" class="btn">Men</a></li>
                         <li><a href="{% url 'products' %}" class="btn">Women</a></li>
                         <li><a href="{% url 'products' %}" class="btn">Kids</a></li>
-                        <li><a href="{% url 'aboutus' %}" class="btn">About Us</a></li>
+                        <li><a href="{% url 'aboutus' %}"class="btn">About Us</a></li>
                     </ul>
                 </nav>
                 <form class="search-bar" method="get" action="{% url 'search_products' %}">
                     <input type="text" name="q" placeholder="Search for products..." value="{{ search_query|default:'' }}">
                     <button type="submit" class="btn"><i class="fa fa-search"></i></button>
                 </form>
-                <a href="{% url 'cart' %}" ><img src="{% static 'web/images/cart.png' %}" width="30px" height="30px"></a>
-                <img src="{% static 'web/images/menu.png' %}" class="menu-icon" onClick="menutoggle()" >
+                <a href="{% url 'cart' %}" class="btn" id="cart-btn"><img src="{% static 'web/images/cart.png' %}" width="30px" height="30px"></a>
+                <img src="{% static 'web/images/menu.png' %}" class="menu-icon" onClick="menutoggle()">
             </div>
         </div>
     </div>
@@ -53,33 +41,43 @@
     <div class="small-container">
         <div class="row row-2">
             <h2>All Products</h2>
-            <select>
-                <option>Default sorting</option>
-                <option>Sort by price</option>
-                <option>Sort by popularity</option>
-                <option>Sort by rating</option>
-                <option>Sort by sale</option>
-            </select>
+            <form method="get" id="sortForm">
+                <select name="sort" onchange="document.getElementById('sortForm').submit();">
+                    <option value="">Default sorting</option>
+                    <option value="price" {% if sort == 'price' %}selected{% endif %}>Sort by price: Low to High</option>
+                    <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Sort by price: High to Low</option>
+                </select>
+            </form>
         </div>
-        <div class="row">
-            {% for shoe in shoes %}
+        <div class="row" style="text-align: left;">
+            {% for shoe in page_obj %}
             <div class="col-4">
                 <a href="{{ shoe.get_absolute_url }}">
                     <img src="{{ shoe.get_image }}" alt="{{ shoe.shoe_name }}">
                 </a>
                 <a href="{{ shoe.get_absolute_url }}"><h4>{{ shoe.shoe_name }}</h4></a>
-                <div class="rating">
-                    <i class="fa fa-star"></i>
-                    <i class="fa fa-star"></i>
-                    <i class="fa fa-star"></i>
-                    <i class="fa fa-star-half-o"></i>
-                    <i class="fa fa-star-o"></i>
-                </div>
                 <p>{{ shoe.original_price|intcomma }} VNĐ</p>
             </div>
             {% empty %}
             <p>No products available.</p>
             {% endfor %}
+        </div>
+
+        <!-- Pagination controls -->
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+                <a href="?{% if sort %}sort={{ sort }}&{% endif %}page={{ page_obj.previous_page_number }}">&laquo;</a>
+            {% endif %}
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <span class="current">{{ num }}</span>
+                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <a href="?{% if sort %}sort={{ sort }}&{% endif %}page={{ num }}">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+            {% if page_obj.has_next %}
+                <a href="?{% if sort %}sort={{ sort }}&{% endif %}page={{ page_obj.next_page_number }}">&raquo;</a>
+            {% endif %}
         </div>
     </div>
     <!-- ...rest of your page... -->
@@ -87,21 +85,30 @@
         
         
         <!----------------------------------footer------------------------------------->
-<div class="footer">
-  <div class="container">
-    <div class="footer-row">
-      <img src="{% static 'web/images/logo.png' %}" alt="Logo" class="footer-logo">
+    <div class="footer">
+        <div class="container">
+            <div class="footer-row">
+                <img src= "{% static 'web/images/logo.png' %}" alt="Logo" class="footer-logo">
 
-      <ul class="footer-social">
-        <a href = "https://www.facebook.com/"><li><strong>Facebook</strong></li></a>
-        <a href = "https://www.instagram.com/"><li><strong>Instagram</strong></li></a>
-        <a href = "https://x.com/"><li><strong>X</strong></li></a>
-        <a href = "https://www.youtube.com/"><li><strong>Youtube</strong></li></a>  
-      </ul>
+                <ul class="footer-social">
+                    <a href="https://www.facebook.com/">
+                        <li><strong>Facebook</strong></li>
+                    </a>
+                    <a href="https://www.instagram.com/">
+                        <li><strong>Instagram</strong></li>
+                    </a>
+                    <a href="https://x.com/">
+                        <li><strong>X</strong></li>
+                    </a>
+                    <a href="https://www.youtube.com/">
+                        <li><strong>Youtube</strong></li>
+                    </a>
+                </ul>
+            </div>
+            <hr>
+            <p class="copyright">Capstone Project Intro to Software - IT3180E</p>
+        </div>
     </div>
-    <hr><p class="copyright">Capstone Project Intro to Software - IT3180E</p>
-  </div>
-</div>
         
         
         <!-----------------------------------js for toggle menu----------------------------------------------->

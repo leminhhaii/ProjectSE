@@ -12,9 +12,20 @@ from django.shortcuts import render, redirect
 
 
 
+from django.core.paginator import Paginator
+
 def products(request):
     shoes = Product.objects.filter(in_stock__gt=0)
-    return render(request, 'products.html', {'shoes': shoes})
+    sort = request.GET.get('sort')
+    if sort == 'price':
+        shoes = shoes.order_by('original_price')
+    elif sort == 'price_desc':
+        shoes = shoes.order_by('-original_price')
+    # Pagination
+    paginator = Paginator(shoes, 8)  # 10 products per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'products.html', {'page_obj': page_obj, 'sort': sort})
 
 def shoe_detail(request, sku):
     shoe = get_object_or_404(Product, sku=sku)
