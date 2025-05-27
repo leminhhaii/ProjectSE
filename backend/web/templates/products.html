@@ -42,6 +42,9 @@
         <div class="row row-2">
             <h2>All Products</h2>
             <form method="get" id="sortForm">
+                {% if search_query %}
+                    <input type="hidden" name="q" value="{{ search_query }}">
+                {% endif %}
                 <select name="sort" onchange="document.getElementById('sortForm').submit();">
                     <option value="">Default sorting</option>
                     <option value="price" {% if sort == 'price' %}selected{% endif %}>Sort by price: Low to High</option>
@@ -51,32 +54,32 @@
         </div>
         <div class="row" style="text-align: left;">
             {% for shoe in page_obj %}
-            <div class="col-4">
-                <a href="{{ shoe.get_absolute_url }}">
-                    <img src="{{ shoe.get_image }}" alt="{{ shoe.shoe_name }}">
-                </a>
-                <a href="{{ shoe.get_absolute_url }}"><h4>{{ shoe.shoe_name }}</h4></a>
-                <p>{{ shoe.original_price|intcomma }} VNĐ</p>
-            </div>
-            {% empty %}
-            <p>No products available.</p>
+                <div class="col-4">
+                    <a href="{{ shoe.get_absolute_url }}">
+                        <img src="{{ shoe.get_image }}" alt="{{ shoe.shoe_name }}">
+                    </a>
+                    <a href="{{ shoe.get_absolute_url }}"><h4>{{ shoe.shoe_name }}</h4></a>
+                    <p>{{ shoe.original_price|intcomma }} VNĐ</p>
+                </div>
+                {% empty %}
+                <p>No products available.</p>
             {% endfor %}
         </div>
 
         <!-- Pagination controls -->
         <div class="pagination">
             {% if page_obj.has_previous %}
-                <a href="?{% if sort %}sort={{ sort }}&{% endif %}page={{ page_obj.previous_page_number }}">&laquo;</a>
+                <a href="?{% if sort %}sort={{ sort }}&{% endif %}{% if search_query %}q={{ search_query }}&{% endif %}page={{ page_obj.previous_page_number }}">&laquo;</a>
             {% endif %}
             {% for num in page_obj.paginator.page_range %}
                 {% if page_obj.number == num %}
                     <span class="current">{{ num }}</span>
                 {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                    <a href="?{% if sort %}sort={{ sort }}&{% endif %}page={{ num }}">{{ num }}</a>
+                    <a href="?{% if sort %}sort={{ sort }}&{% endif %}{% if search_query %}q={{ search_query }}&{% endif %}page={{ num }}">{{ num }}</a>
                 {% endif %}
             {% endfor %}
             {% if page_obj.has_next %}
-                <a href="?{% if sort %}sort={{ sort }}&{% endif %}page={{ page_obj.next_page_number }}">&raquo;</a>
+                <a href="?{% if sort %}sort={{ sort }}&{% endif %}{% if search_query %}q={{ search_query }}&{% endif %}page={{ page_obj.next_page_number }}">&raquo;</a>
             {% endif %}
         </div>
     </div>

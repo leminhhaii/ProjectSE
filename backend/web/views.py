@@ -22,10 +22,14 @@ def products(request):
     elif sort == 'price_desc':
         shoes = shoes.order_by('-original_price')
     # Pagination
-    paginator = Paginator(shoes, 8)  # 10 products per page
+    paginator = Paginator(shoes, 8)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'products.html', {'page_obj': page_obj, 'sort': sort})
+    return render(request, 'products.html', {
+        'page_obj': page_obj,
+        'sort': sort,
+        'search_query': '',  # để template dùng chung form search
+    })
 
 def shoe_detail(request, sku):
     shoe = get_object_or_404(Product, sku=sku)
@@ -113,6 +117,7 @@ def add_to_cart(request, sku):
 
 def search_products(request):
     query = request.GET.get('q', '').strip()
+    sort = request.GET.get('sort')
     shoes = Product.objects.filter(in_stock__gt=0)
     if query:
         shoes = shoes.filter(
@@ -120,7 +125,18 @@ def search_products(request):
             Q(brand__icontains=query) |
             Q(color__icontains=query)
         )
-    return render(request, 'products.html', {'shoes': shoes, 'search_query': query})
+    if sort == 'price':
+        shoes = shoes.order_by('original_price')
+    elif sort == 'price_desc':
+        shoes = shoes.order_by('-original_price')
+    paginator = Paginator(shoes, 8)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'products.html', {
+        'page_obj': page_obj,
+        'search_query': query,
+        'sort': sort,
+    })
 
 def about_us(request):
     return render(request, 'web/aboutus.html')
