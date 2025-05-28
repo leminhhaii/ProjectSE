@@ -17,16 +17,38 @@
 <body>
     <div class="header">
         <div class="container">
+			<div class="welcome-group">
+                <p class="welcome-text">
+                    Hello
+                    {% if user.is_authenticated %}
+                        {% if user.get_full_name %}
+                            {{ user.get_full_name }}
+                        {% else %}
+                            {{ user.username }}
+                        {% endif %}
+                    {% else %}
+                        Guest
+                    {% endif %}
+                </p>
+                {% if user.is_authenticated %}
+                    <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="signoutbtn" >Sign Out</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="signoutbtn">Sign In</a>
+                {% endif %}
+            </div>
             <div class="navbar">
                 <div class="logo">
                     <a href="{% url 'home' %}"><img src="{% static 'web/images/logo.png' %}" width="125px"></a>
                 </div>
                 <nav>
                     <ul id="MenuItems">
-                        <li><a href="{% url 'products' %}" class="btn">Men</a></li>
-                        <li><a href="{% url 'products' %}" class="btn">Women</a></li>
-                        <li><a href="{% url 'products' %}" class="btn">Kids</a></li>
-                        <li><a href="{% url 'aboutus' %}"class="btn">About Us</a></li>
+                        <li><a href="{% url 'products_men' %}" class="btn">Men</a></li>
+                        <li><a href="{% url 'products_women' %}" class="btn">Women</a></li>
+                        <li><a href="{% url 'products' %}" class="btn">All</a></li>
+                        <li><a href="{% url 'aboutus' %}" class="btn">About Us</a></li>
                     </ul>
                 </nav>
                 <form class="search-bar" method="get" action="{% url 'search_products' %}">
@@ -50,7 +72,7 @@
 		</nav>
 		<hr>
 		<section id="Quoc">
-			<h2>Personal Information</h2>
+					<h2>Personal Information</h2>
 
             <ul style = "padding-left: 30px">
 				<li>Name: Trieu Kinh Quoc</li>
@@ -60,7 +82,7 @@
 				<li>Email:<a href="quoc.tk225524@sis.hust.edu.vn" target="_blank">quoc.tk225524@sis.hust.edu.vn</a> </li>
 			</ul>
 			<figure class="photo-figure">
-                <img src="{% static 'web/images/1. Ảnh thẻ_Triệu Kinh Quốc.jpg' %}" alt="Quoc">
+				<img src="{% static 'web/images/1. Ảnh thẻ_Triệu Kinh Quốc.jpg' %}" alt="Quoc">
 				<figcaption></figcaption>
 			</figure>
 
@@ -76,7 +98,7 @@
 			</ul>
 
 			<h2>Role Description</h2>
-			<p style = "text-align: justify; padding-left: 20px;">
+			<p style = "text-align: justify; padding-left: 30px; color: #252422;">
 				I build the Front-End of the Shoes Website. I am responsible fordesigning the user interface, ensuring that the website is visually good, user-friendly, and responsive across devices. I also implement interactive features and maintain consistency in the site's appearance.
 			</p>
 		</section>
@@ -108,8 +130,8 @@
 			</ul>
 
 			<h2>Role Description</h2>
-			<p style = "text-align: justify; padding-left: 20px;">
-				I build the Front-End of the Shoes Website. I am responsible fordesigning the user interface, ensuring that the website is visually good, user-friendly, and responsive across devices. I also implement interactive features and maintain consistency in the site's appearance.
+			<p style = "text-align: justify; padding-left: 30px; color: #252422;">
+			I build the Front-End of the Shoes Website. I am responsible fordesigning the user interface, ensuring that the website is visually good, user-friendly, and responsive across devices. I also implement interactive features and maintain consistency in the site's appearance.
 			</p>
 		</section>
 		<hr>
@@ -140,7 +162,7 @@
 			</ul>
 
 			<h2>Role Description</h2>
-			<p style = "text-align: justify; padding-left: 20px;">
+			<p style = "text-align: justify; padding-left: 30px; color: #252422;">
 				I build the Front-End of the Shoes Website. I am responsible fordesigning the user interface, ensuring that the website is visually good, user-friendly, and responsive across devices. I also implement interactive features and maintain consistency in the site's appearance.
 			</p>
 		</section>
@@ -172,7 +194,7 @@
 			</ul>
 
 			<h2>Role Description</h2>
-			<p style = "text-align: justify; padding-left: 20px;">
+			<p style = "text-align: justify; padding-left: 30px; color: #252422;">
 				I build the Front-End of the Shoes Website. I am responsible fordesigning the user interface, ensuring that the website is visually good, user-friendly, and responsive across devices. I also implement interactive features and maintain consistency in the site's appearance.
 			</p>
 		</section>
@@ -204,7 +226,7 @@
 			</ul>
 
 			<h2>Role Description</h2>
-			<p style = "text-align: justify; padding-left: 20px;">
+			<p style = "text-align: justify; padding-left: 30px; color: #252422;">
 				I build the Front-End of the Shoes Website. I am responsible fordesigning the user interface, ensuring that the website is visually good, user-friendly, and responsive across devices. I also implement interactive features and maintain consistency in the site's appearance.
 			</p>
 		</section>

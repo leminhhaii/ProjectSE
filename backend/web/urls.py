@@ -1,21 +1,9 @@
-# from django.urls import path, include
-
-# from web import views
-# from django.contrib import admin
-# from .views import home
-# urlpatterns = [
-#     path ('web/', views.home, name='home'),
-#     path('latest-products/', views.LatestProductsList.as_view()),
-#     path('web/search/', views.search),
-#     path('web/<slug:category_slug>/<slug:product_slug>/', views.ProductDetail.as_view()),
-#     path('web/<slug:category_slug>/', views.CategoryDetail.as_view()),
-# ]
-
 from django.urls import path
 from .views import products, shoe_detail, home, add_to_cart, remove_from_cart, view_cart, search_products
 from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
 from . import views
+from django.contrib.auth.views import LoginView, LogoutView
 
 urlpatterns = [
     path('products/', products, name='products'),
@@ -27,4 +15,9 @@ urlpatterns = [
     path('accounts/login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
     path('search/', search_products, name='search_products'),
     path('aboutus/', TemplateView.as_view(template_name='aboutus.html'), name='aboutus'),
+    path('login/', LoginView.as_view(template_name='login.html'), name='login'),
+    path('createaccount/', views.create_account, name='createaccount'),
+    path('logout/', LogoutView.as_view(next_page='home'), name='logout'),
+    path('products/men/', views.products_men, name='products_men'),
+    path('products/women/', views.products_women, name='products_women'),
 ]
