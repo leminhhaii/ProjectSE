@@ -10,6 +10,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        select[name="sort"] {
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
 </head>
 
 <body>
@@ -70,7 +75,7 @@
                     <input type="hidden" name="q" value="{{ search_query }}">
                 {% endif %}
                 <select name="sort" onchange="document.getElementById('sortForm').submit();">
-                    <option value="">Default sorting</option>
+                    <option value="" >Default sorting</option>
                     <option value="price" {% if sort == 'price' %}selected{% endif %}>Sort by price: Low to High</option>
                     <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Sort by price: High to Low</option>
                 </select>
