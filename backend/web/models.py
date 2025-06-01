@@ -53,3 +53,22 @@ class CartItem(models.Model):
     quantity = models.PositiveIntegerField(default=1)
     size = models.TextField(default='N/A')  # đặt giá trị mặc định
 
+class Order(models.Model):
+    name = models.CharField(max_length=255)
+    address = models.CharField(max_length=255)
+    phone = models.CharField(max_length=20)
+    payment = models.CharField(max_length=50)
+    total = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Order #{self.id} - {self.name}"
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    quantity = models.PositiveIntegerField()
+    price = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.product} x {self.quantity}"

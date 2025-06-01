@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render
-from .models import Product, Cart, CartItem
+from .models import Product, Cart, CartItem, Order, OrderItem
 from django.contrib import messages
 from .serializers import ProductSerializer, CartSerializer
 from django.db.models import Q
@@ -199,30 +199,44 @@ def products_women(request):
 def checkout(request):
     cart = get_cart(request)
     items = CartItem.objects.filter(cart=cart) if cart else []
-    # Nếu giỏ hàng rỗng, không cho checkout
     if not items:
         messages.error(request, "Giỏ hàng của bạn đang trống, không thể thanh toán.")
         return redirect('cart')
     if request.method == 'POST':
-        # Trừ hàng trong database
+        name = request.POST.get("name")
+        address = request.POST.get("address")
+        phone = request.POST.get("phone")
+        payment = request.POST.get("payment")
+        total = sum(item.product.original_price * item.quantity for item in items)
+
+        # Tạo đơn hàng
+        order = Order.objects.create(
+            name=name,
+            address=address,
+            phone=phone,
+            payment=payment,
+            total=total
+        )
+        # Tạo các OrderItem
         for item in items:
+            OrderItem.objects.create(
+                order=order,
+                product=item.product,
+                quantity=item.quantity,
+                price=item.product.original_price
+            )
+            # Trừ hàng trong database
             if item.product.in_stock is not None:
                 item.product.in_stock = max(0, item.product.in_stock - item.quantity)
                 item.product.save()
         # Xóa các item trong cart
         items.delete()
-        # Đánh dấu cart đã hoàn thành
         cart.is_completed = True
         cart.save()
-        # Xóa cart_id khỏi session
         if 'cart_id' in request.session:
             del request.session['cart_id']
         messages.success(request, "Đặt hàng thành công! Cảm ơn bạn đã mua sắm.")
-        print("✅ Form đã được gửi!")
-        name = request.POST.get("name")
-        print(f"Tên người đặt hàng: {name}")
         return redirect('cart')
-        
     return redirect('cart')
 
 def clear_cart(request):
