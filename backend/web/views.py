@@ -239,6 +239,7 @@ def checkout(request):
         return redirect('cart')
     return redirect('cart')
 
+
 def clear_cart(request):
     cart = get_cart(request)
     if cart:
