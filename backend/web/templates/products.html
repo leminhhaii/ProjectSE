@@ -20,28 +20,7 @@
 <body>
     <div class="header">
         <div class="container">
-            <div class="welcome-group">
-                <p class="welcome-text">
-                    Hello
-                    {% if user.is_authenticated %}
-                        {% if user.get_full_name %}
-                            {{ user.get_full_name }}
-                        {% else %}
-                            {{ user.username }}
-                        {% endif %}
-                    {% else %}
-                        Guest
-                    {% endif %}
-                </p>
-                {% if user.is_authenticated %}
-                    <form action="{% url 'logout' %}" method="post" style="display:inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="signoutbtn" >Sign Out</button>
-                    </form>
-                {% else %}
-                    <a href="{% url 'login' %}" class="signoutbtn">Sign In</a>
-                {% endif %}
-            </div>
+            
             <div class="navbar">
                 <div class="logo">
                     <a href="{% url 'home' %}"><img src="{% static 'web/images/logo.png' %}" width="125px"></a>

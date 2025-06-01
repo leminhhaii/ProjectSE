@@ -12,32 +12,114 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
+<style>
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.4);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      animation: fadeIn 0.3s ease;
+      z-index: 1000;
+    }
+
+    .popup {
+      background-color: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 500px;
+      animation: slideIn 0.4s ease;
+      position: relative;
+    }
+
+    .popup h2 {
+      margin-bottom: 20px;
+      text-align: center;
+      color: #ff523b;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .form-group label .required {
+      color: red;
+      margin-left: 4px;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: #ff523b;
+      outline: none;
+    }
+
+    .popup .btn {
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #888;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .close-btn:hover {
+      color: #ff523b;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateY(-40px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        background: rgba(0, 0, 0, 0);
+      }
+      to {
+        background: rgba(0, 0, 0, 0.4);
+      }
+    }
+</style>
 <body>
     <!-- Header -->
     <div class="header">
         <div class="container">
-            <div class="welcome-group">
-                <p class="welcome-text">
-                    Hello
-                    {% if user.is_authenticated %}
-                        {% if user.get_full_name %}
-                            {{ user.get_full_name }}
-                        {% else %}
-                            {{ user.username }}
-                        {% endif %}
-                    {% else %}
-                        Guest
-                    {% endif %}
-                </p>
-                {% if user.is_authenticated %}
-                    <form action="{% url 'logout' %}" method="post" style="display:inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="signoutbtn" >Sign Out</button>
-                    </form>
-                {% else %}
-                    <a href="{% url 'login' %}" class="signoutbtn">Sign In</a>
-                {% endif %}
-            </div>
             <div class="navbar">
                 <div class="logo">
                     <a href="{% url 'home' %}"><img src="{% static 'web/images/logo.png' %}" width="125px"></a>
@@ -66,7 +148,7 @@
             <tr>
                 <th>Product</th>
                 <th>Quantity</th>
-                <th>Subtotal</th>
+                <th>Total</th>
             </tr>
             {% for item in items %}
             <tr>
@@ -93,9 +175,14 @@
         <div class="total-price">
             <table>
                 <tr>
-                    <td>Subtotal</td>
+                    <td>Total</td>
                     <td>
                         {{ items|calc_subtotal|intcomma }} VNĐ
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="text-align: right;">
+                    <button class="btn" onclick="openPopup()">Check out</button>
                     </td>
                 </tr>
                 <!-- Add tax and total if needed -->
@@ -129,6 +216,42 @@
         </div>
     </div>
 
+    <div class="overlay" id="popupOverlay">
+        <div class="popup">
+        <span class="close-btn" onclick="closePopup()">×</span>
+        <h2>Checkout</h2>
+        <form onsubmit="return submitCheckout()">
+            <div class="form-group">
+            <label for="name">Họ và tên <span class="required">*</span></label>
+            <input type="text" id="name" placeholder="Nguyễn Văn A" required />
+            </div>
+            <div class="form-group">
+            <div class="form-group">
+                <label for="total">Tổng số tiền thanh toán</label>
+                <input type="text" id="total" value="{{ items|calc_subtotal|intcomma }} VNĐ" readonly />
+            </div>
+            </div>
+            <div class="form-group">
+            <label for="address">Địa chỉ nhận hàng <span class="required">*</span></label>
+            <input type="text" id="address" placeholder="Số 1 Đại Cồ Việt..." required />
+            </div>
+            <div class="form-group">
+            <label for="phone">Số điện thoại <span class="required">*</span></label>
+            <input type="text" id="phone" placeholder="0123 456 789" required />
+            </div>
+            <div class="form-group">
+            <label for="payment">Phương thức thanh toán</label>
+            <select id="payment">
+                <option>Thẻ ghi nợ</option>
+                <option>Thẻ tín dụng</option>
+                <option>Chuyển khoản</option>
+                <option>Thanh toán khi nhận hàng</option>
+            </select>
+            </div>
+            <button type="submit" class="btn">Xác nhận thanh toán</button>
+        </form>
+        </div>
+    </div>
     <script>
         var menuItems = document.getElementById("MenuItems");
         menuItems.style.maxHeight = "0px";
@@ -140,6 +263,37 @@
                 menuItems.style.maxHeight = "0px";
             }
         }
+    function openPopup() {
+      document.getElementById("popupOverlay").style.display = "flex";
+    }
+
+    function closePopup() {
+      document.getElementById("popupOverlay").style.display = "none";
+    }
+
+    function submitCheckout() {
+      const name = document.getElementById("name").value.trim();
+      const address = document.getElementById("address").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+
+      if (!name || !address || !phone) {
+        alert("Vui lòng điền đầy đủ các trường bắt buộc.");
+        return false;
+      }
+
+      alert("Đặt hàng thành công! Cảm ơn bạn đã mua sắm.");
+      closePopup();
+      return false; // Để không reload trang
+    }
+
+    // Đóng popup khi click ra ngoài
+    window.addEventListener('click', function(e) {
+      const overlay = document.getElementById("popupOverlay");
+      const popup = overlay.querySelector(".popup");
+      if (e.target === overlay) {
+        closePopup();
+      }
+    });
     </script>
 </body>
 </html>

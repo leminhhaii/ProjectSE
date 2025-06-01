@@ -65,43 +65,45 @@ def home(request):
         'latest_products': latest_products,
     })
 
-@login_required
+def get_cart(request):
+    cart_id = request.session.get('cart_id')
+    cart = None
+    if cart_id:
+        cart = Cart.objects.filter(id=cart_id, is_completed=False).first()
+    if not cart:
+        cart = Cart.objects.create(is_completed=False)
+        request.session['cart_id'] = cart.id
+    return cart
+
 def remove_from_cart(request, sku):
     product = get_object_or_404(Product, sku=sku)
-    cart = Cart.objects.filter(user=request.user, is_completed=False).first()
+    cart = get_cart(request)
     if cart:
         cart_item = CartItem.objects.filter(cart=cart, product=product).first()
         if cart_item:
-            # Cộng lại số lượng vào kho
             product.in_stock += cart_item.quantity
             product.save()
             cart_item.delete()
     return redirect('cart')
 
-@login_required
 def view_cart(request):
-    cart = Cart.objects.filter(user=request.user, is_completed=False).first()
+    cart = get_cart(request)
     items = CartItem.objects.filter(cart=cart) if cart else []
     return render(request, 'cart.html', {'cart': cart, 'items': items})
 
-@login_required
+
 def add_to_cart(request, sku):
     product = get_object_or_404(Product, sku=sku)
-    user = request.user
-    cart, created = Cart.objects.get_or_create(user=user, is_completed=False)
-
+    cart = get_cart(request)
     quantity = int(request.POST.get('quantity', 1))
 
-    # Check if product is out of stock
     if not product.in_stock or product.in_stock < quantity:
         messages.error(request, "Sản phẩm đã hết hàng hoặc không đủ số lượng trong kho.")
         return redirect('shoe_detail', sku=sku)
 
-    # Subtract from stock
     product.in_stock -= quantity
     product.save()
 
-    # Add or update cart item
     cart_item, created = CartItem.objects.get_or_create(
         cart=cart,
         product=product,
@@ -111,8 +113,6 @@ def add_to_cart(request, sku):
     if not created:
         cart_item.quantity += quantity
         cart_item.save()
-
-    # messages.success(request, "Đã thêm sản phẩm vào giỏ hàng.")
     return redirect('cart')
 
 def search_products(request):
@@ -213,3 +213,7 @@ def products_women(request):
 #         'search_query': '',
 #         'gender': 'unisex',
 #     })
+
+def checkout(request):
+    return render(request, 'checkout.html')
+

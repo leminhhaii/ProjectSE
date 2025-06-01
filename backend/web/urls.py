@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import products, shoe_detail, home, add_to_cart, remove_from_cart, view_cart, search_products
+from .views import products, shoe_detail, home, add_to_cart, remove_from_cart, view_cart, search_products, checkout
 from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
 from . import views
