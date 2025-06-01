@@ -13,7 +13,6 @@ from django.contrib.auth.views import LoginView
 
 
 from django.core.paginator import Paginator
-
 def products(request):
     shoes = Product.objects.filter(in_stock__gt=0)
     sort = request.GET.get('sort')
@@ -164,7 +163,7 @@ def create_account(request):
     return render(request, 'createaccount.html')
 
 def products_men(request):
-    shoes = Product.objects.filter(in_stock__gt=0, gender__iexact='men')
+    shoes = Product.objects.filter(in_stock__gt=0, gender__iexact='Men')
     sort = request.GET.get('sort')
     if sort == 'price':
         shoes = shoes.order_by('original_price')
@@ -177,11 +176,11 @@ def products_men(request):
         'page_obj': page_obj,
         'sort': sort,
         'search_query': '',
-        'gender': 'men',
+        'gender': 'Men',
     })
 
 def products_women(request):
-    shoes = Product.objects.filter(in_stock__gt=0, gender__iexact='women')
+    shoes = Product.objects.filter(in_stock__gt=0, gender__iexact='Women')
     sort = request.GET.get('sort')
     if sort == 'price':
         shoes = shoes.order_by('original_price')
@@ -194,26 +193,41 @@ def products_women(request):
         'page_obj': page_obj,
         'sort': sort,
         'search_query': '',
-        'gender': 'women',
+        'gender': 'Women',
     })
 
-# def products_unisex(request):
-#     shoes = Product.objects.filter(in_stock__gt=0, gender__iexact='unisex')
-#     sort = request.GET.get('sort')
-#     if sort == 'price':
-#         shoes = shoes.order_by('original_price')
-#     elif sort == 'price_desc':
-#         shoes = shoes.order_by('-original_price')
-#     paginator = Paginator(shoes, 8)
-#     page_number = request.GET.get('page')
-#     page_obj = paginator.get_page(page_number)
-#     return render(request, 'products.html', {
-#         'page_obj': page_obj,
-#         'sort': sort,
-#         'search_query': '',
-#         'gender': 'unisex',
-#     })
-
 def checkout(request):
-    return render(request, 'checkout.html')
+    cart = get_cart(request)
+    items = CartItem.objects.filter(cart=cart) if cart else []
+    # Nếu giỏ hàng rỗng, không cho checkout
+    if not items:
+        messages.error(request, "Giỏ hàng của bạn đang trống, không thể thanh toán.")
+        return redirect('cart')
+    if request.method == 'POST':
+        # Trừ hàng trong database
+        for item in items:
+            if item.product.in_stock is not None:
+                item.product.in_stock = max(0, item.product.in_stock - item.quantity)
+                item.product.save()
+        # Xóa các item trong cart
+        items.delete()
+        # Đánh dấu cart đã hoàn thành
+        cart.is_completed = True
+        cart.save()
+        # Xóa cart_id khỏi session
+        if 'cart_id' in request.session:
+            del request.session['cart_id']
+        messages.success(request, "Đặt hàng thành công! Cảm ơn bạn đã mua sắm.")
+        print("✅ Form đã được gửi!")
+        name = request.POST.get("name")
+        print(f"Tên người đặt hàng: {name}")
+        return redirect('cart')
+        
+    return redirect('cart')
 
+def clear_cart(request):
+    cart = get_cart(request)
+    if cart:
+        CartItem.objects.filter(cart=cart).delete()
+    messages.success(request, "Đã xóa toàn bộ giỏ hàng.")
+    return redirect('cart')

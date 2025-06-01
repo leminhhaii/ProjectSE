@@ -181,9 +181,13 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="2" style="text-align: right;">
-                    <button class="btn" onclick="openPopup()">Check out</button>
-                    </td>
+                  <td colspan="2" style="text-align: right;">
+                    {% if items %}
+                      <button class="btn" onclick="openPopup()">Check out</button>
+                    {% else %}
+                      <button class="btn" disabled style="opacity: 0.6; cursor: not-allowed;">Check out</button>
+                    {% endif %}
+                  </td>
                 </tr>
                 <!-- Add tax and total if needed -->
             </table>
@@ -220,36 +224,42 @@
         <div class="popup">
         <span class="close-btn" onclick="closePopup()">×</span>
         <h2>Checkout</h2>
-        <form onsubmit="return submitCheckout()">
-            <div class="form-group">
+        <form method="post" action="{% url 'checkout' %}" onsubmit="return validateCheckout()"> <!-- GỘP -->
+          {% csrf_token %}
+
+          <div class="form-group">
             <label for="name">Họ và tên <span class="required">*</span></label>
-            <input type="text" id="name" placeholder="Nguyễn Văn A" required />
-            </div>
-            <div class="form-group">
-            <div class="form-group">
-                <label for="total">Tổng số tiền thanh toán</label>
-                <input type="text" id="total" value="{{ items|calc_subtotal|intcomma }} VNĐ" readonly />
-            </div>
-            </div>
-            <div class="form-group">
+            <input type="text" name="name" id="name" placeholder="Nguyễn Văn A" required />
+          </div>
+
+          <div class="form-group">
+            <label for="total">Tổng số tiền thanh toán</label>
+            <input type="text" id="total" value="{{ items|calc_subtotal|intcomma }} VNĐ" readonly />
+          </div>
+
+          <div class="form-group">
             <label for="address">Địa chỉ nhận hàng <span class="required">*</span></label>
-            <input type="text" id="address" placeholder="Số 1 Đại Cồ Việt..." required />
-            </div>
-            <div class="form-group">
+            <input type="text" name="address" id="address" placeholder="Số 1 Đại Cồ Việt..." required />
+          </div>
+
+          <div class="form-group">
             <label for="phone">Số điện thoại <span class="required">*</span></label>
-            <input type="text" id="phone" placeholder="0123 456 789" required />
-            </div>
-            <div class="form-group">
+            <input type="text" name="phone" id="phone" placeholder="0123 456 789" required />
+          </div>
+
+          <div class="form-group">
             <label for="payment">Phương thức thanh toán</label>
-            <select id="payment">
-                <option>Thẻ ghi nợ</option>
-                <option>Thẻ tín dụng</option>
-                <option>Chuyển khoản</option>
-                <option>Thanh toán khi nhận hàng</option>
+            <select id="payment" name="payment">
+              <option>Thẻ ghi nợ</option>
+              <option>Thẻ tín dụng</option>
+              <option>Chuyển khoản</option>
+              <option>Thanh toán khi nhận hàng</option>
             </select>
-            </div>
-            <button type="submit" class="btn">Xác nhận thanh toán</button>
+          </div>
+
+          <button type="submit" class="btn">Xác nhận thanh toán</button>
         </form>
+
         </div>
     </div>
     <script>
@@ -271,7 +281,7 @@
       document.getElementById("popupOverlay").style.display = "none";
     }
 
-    function submitCheckout() {
+    function validateCheckout() {
       const name = document.getElementById("name").value.trim();
       const address = document.getElementById("address").value.trim();
       const phone = document.getElementById("phone").value.trim();
@@ -282,8 +292,7 @@
       }
 
       alert("Đặt hàng thành công! Cảm ơn bạn đã mua sắm.");
-      closePopup();
-      return false; // Để không reload trang
+      return true; // Để không reload trang
     }
 
     // Đóng popup khi click ra ngoài

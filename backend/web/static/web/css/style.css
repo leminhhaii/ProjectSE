@@ -676,17 +676,6 @@ form a {
     background-color: #e9ecef;
 }
 
-#about .photo-figure {
-    float: right;
-    border: 2px double;
-    padding: 20px;
-    max-width: 100%;
-}
-
-#about .photo-figure img {
-    max-width: 100%;
-    height: auto;
-}
 
 #about .Favorite li {
     margin-left: 20px;

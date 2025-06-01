@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import products, shoe_detail, home, add_to_cart, remove_from_cart, view_cart, search_products, checkout
+from .views import products, shoe_detail, home, add_to_cart, remove_from_cart, view_cart, search_products, checkout, clear_cart
 from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
 from . import views
@@ -20,4 +20,6 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(next_page='home'), name='logout'),
     path('products/men/', views.products_men, name='products_men'),
     path('products/women/', views.products_women, name='products_women'),
+    path('cart/clear/', clear_cart, name='clear_cart'),
+    path('checkout/', checkout, name='checkout'),
 ]

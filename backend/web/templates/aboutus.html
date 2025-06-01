@@ -13,11 +13,21 @@
     <!--added a cdn link by searching font awesome4 cdn and getting this link from https://www.bootstrapcdn.com/fontawesome/ this url*/-->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
+<style>
+.figure {
+    float: right;
+    border: none;
+    padding: 20px; 
+    max-width: 100%;
+}
 
+.photo-figure img {
+    max-width: 100%;
+    height: auto;
+}</style>
 <body>
     <div class="header">
         <div class="container">
-			
             <div class="navbar">
                 <div class="logo">
                     <a href="{% url 'home' %}"><img src="{% static 'web/images/logo.png' %}" width="125px"></a>
@@ -51,162 +61,117 @@
 		</nav>
 		<hr>
 		<section id="Quoc">
-					<h2>Personal Information</h2>
+			<h2>Personal Information</h2>
+
+			<figure class="figure">
+				<img src="{% static 'web/images/1. Ảnh thẻ_Triệu Kinh Quốc.jpg' %}" alt="Quoc" style="width: 150px; height: 225px;">
+				<figcaption></figcaption>
+			</figure>
 
             <ul style = "padding-left: 30px">
 				<li>Name: Trieu Kinh Quoc</li>
 				<li>Student ID: 20225524</li>
 				<li>Course: IT3180E</li>
 				<li>Occupation: Student</li>
-				<li>Email:<a href="quoc.tk225524@sis.hust.edu.vn" target="_blank">quoc.tk225524@sis.hust.edu.vn</a> </li>
-			</ul>
-			<figure class="photo-figure">
-				<img src="{% static 'web/images/1. Ảnh thẻ_Triệu Kinh Quốc.jpg' %}" alt="Quoc">
-				<figcaption></figcaption>
-			</figure>
-
-			<h2>Demographic Information</h2>
-
-			<ul style = "padding-left: 30px">
-				<li>Name: Trieu Kinh Quoc</li>
-				<li>Age: 21</li>
-				<li>Gender: Male</li>
-				<li>Occupation: Student</li>
-				<li>Education: High School Graduation</li>
-				<li>Location: Hanoi, Vietnam</li>
+				<li>Email:<a target="_blank">quoc.tk225524@sis.hust.edu.vn</a> </li>
 			</ul>
 
 			<h2>Role Description</h2>
 			<p style = "text-align: justify; padding-left: 30px; color: #252422;">
-				I build the Front-End of the Shoes Website. I am responsible fordesigning the user interface, ensuring that the website is visually good, user-friendly, and responsive across devices. I also implement interactive features and maintain consistency in the site's appearance.
+				I build the Front-End of the Shoes Website. 
 			</p>
 		</section>
 		<hr>
 		<section id="Nguyen">
 			<h2>Personal Information</h2>
-
-            <ul style = "padding-left: 30px">
-				<li>Name: Tran Khoi Nguyen</li>
-				<li>Student ID: 20225524</li>
-				<li>Course: IT3180E</li>
-				<li>Occupation: Student</li>
-				<li>Email:<a href="quoc.tk225524@sis.hust.edu.vn" target="_blank">quoc.tk225524@sis.hust.edu.vn</a> </li>
-			</ul>
-			<figure class="photo-figure">
-				<img src="{% static 'web/images/1. Ảnh thẻ_Triệu Kinh Quốc.jpg' %}" alt="Quoc">
+			
+			<figure class="figure">
+			<img src="{% static 'web/images/khoi nguyen.jpg' %}" alt="Nguyen" style="width: 150px; height: 225px;border:none;">
 				<figcaption></figcaption>
 			</figure>
-
-			<h2>Demographic Information</h2>
-
-			<ul style = "padding-left: 30px">
-				<li>Name: Trieu Kinh Quoc</li>
-				<li>Age: 21</li>
-				<li>Gender: Male</li>
+            <ul style = "padding-left: 30px">
+				<li>Name: Tran Khoi Nguyen</li>
+				<li>Student ID: 20225453</li>
+				<li>Course: IT3180E</li>
 				<li>Occupation: Student</li>
-				<li>Education: High School Graduation</li>
-				<li>Location: Hanoi, Vietnam</li>
+				<li>Email:<a target="_blank">nguyen.tk225453@sis.hust.edu.vn</a> </li>
 			</ul>
+			
 
+			
 			<h2>Role Description</h2>
 			<p style = "text-align: justify; padding-left: 30px; color: #252422;">
-			I build the Front-End of the Shoes Website. I am responsible fordesigning the user interface, ensuring that the website is visually good, user-friendly, and responsive across devices. I also implement interactive features and maintain consistency in the site's appearance.
+				I crawl data and build database.
 			</p>
 		</section>
 		<hr>
 			<section id="Hai">
 			<h2>Personal Information</h2>
 
+			<figure class="figure">
+				<img src="{% static 'web/images/Haile.jpg' %}" alt="Hai" style="width: 150px; height: 225px;"> 
+				<figcaption></figcaption>
+			</figure>
+
             <ul style = "padding-left: 30px">
 				<li>Name: Le Minh Hai</li>
 				<li>Student ID: 20225491</li>
 				<li>Course: IT3180E</li>
 				<li>Occupation: Student</li>
-				<li>Email:<a href="hai.lm225491@sis.hust.edu.vn" target="_blank">hai.lm225491@sis.hust.edu.vn</a> </li>
-			</ul>
-			<figure class="photo-figure">
-				<img src="{% static 'web/images/Haile.jpg' %}" alt="Hai" style="width: 200px; height: 300px;"> 
-				<figcaption></figcaption>
-			</figure>
-
-			<h2>Demographic Information</h2>
-
-			<ul style = "padding-left: 30px">
-				<li>Name: Trieu Kinh Quoc</li>
-				<li>Age: 21</li>
-				<li>Gender: Male</li>
-				<li>Occupation: Student</li>
-				<li>Education: High School Graduation</li>
-				<li>Location: Hanoi, Vietnam</li>
+				<li>Email:<a target="_blank">hai.lm225491@sis.hust.edu.vn</a> </li>
 			</ul>
 
 			<h2>Role Description</h2>
 			<p style = "text-align: justify; padding-left: 30px; color: #252422;">
-				I build the Front-End of the Shoes Website. I am responsible fordesigning the user interface, ensuring that the website is visually good, user-friendly, and responsive across devices. I also implement interactive features and maintain consistency in the site's appearance.
+				I build the Back-end of the Shoes Website. 
 			</p>
 		</section>
 		<hr>
 			<section id="Thanh">
 			<h2>Personal Information</h2>
-
-            <ul style = "padding-left: 30px">
-				<li>Name: Phung Tien Thanh</li>
-				<li>Student ID: 20225524</li>
-				<li>Course: IT3180E</li>
-				<li>Occupation: Student</li>
-				<li>Email:<a href="quoc.tk225524@sis.hust.edu.vn" target="_blank">quoc.tk225524@sis.hust.edu.vn</a> </li>
-			</ul>
-			<figure class="photo-figure">
-				<img src="{% static 'web/images/1. Ảnh thẻ_Triệu Kinh Quốc.jpg' %}" alt="Quoc">
+			
+			<figure class="figure">
+				<img src="{% static 'web/images/Thanh.jpg' %}" alt="Thanh" style="width: 150px; height: 225px;">
 				<figcaption></figcaption>
 			</figure>
 
-			<h2>Demographic Information</h2>
 
-			<ul style = "padding-left: 30px">
-				<li>Name: Trieu Kinh Quoc</li>
-				<li>Age: 21</li>
-				<li>Gender: Male</li>
+            <ul style = "padding-left: 30px">
+				<li>Name: Phung Tien Thanh</li>
+				<li>Student ID: 20225531</li>
+				<li>Course: IT3180E</li>
 				<li>Occupation: Student</li>
-				<li>Education: High School Graduation</li>
-				<li>Location: Hanoi, Vietnam</li>
+				<li>Email:<a target="_blank">thanh.pt225531@sis.hust.edu.vn</a> </li>
 			</ul>
+			
 
 			<h2>Role Description</h2>
 			<p style = "text-align: justify; padding-left: 30px; color: #252422;">
-				I build the Front-End of the Shoes Website. I am responsible fordesigning the user interface, ensuring that the website is visually good, user-friendly, and responsive across devices. I also implement interactive features and maintain consistency in the site's appearance.
+				I build the Front-End of the Shoes Website. 
 			</p>
 		</section>
 		<hr>
 		<section id="Thang">
 			<h2>Personal Information</h2>
 
-            <ul style = "padding-left: 30px">
-				<li>Name: Nguyen Phan Thang</li>
-				<li>Student ID: 20225524</li>
-				<li>Course: IT3180E</li>
-				<li>Occupation: Student</li>
-				<li>Email:<a href="quoc.tk225524@sis.hust.edu.vn" target="_blank">quoc.tk225524@sis.hust.edu.vn</a> </li>
-			</ul>
-			<figure class="photo-figure">
-				<img src="{% static 'web/images/1. Ảnh thẻ_Triệu Kinh Quốc.jpg' %}" alt="Quoc">
+			<figure class="figure">
+				<img src="{% static 'web/images/Thang.jpg' %}" alt="Thang" style="width: 150px; height: 225px;">
 				<figcaption></figcaption>
 			</figure>
 
-			<h2>Demographic Information</h2>
-
-			<ul style = "padding-left: 30px">
-				<li>Name: Trieu Kinh Quoc</li>
-				<li>Age: 21</li>
-				<li>Gender: Male</li>
+            <ul style = "padding-left: 30px">
+				<li>Name: Nguyen Phan Thang</li>
+				<li>Student ID: 20225529</li>
+				<li>Course: IT3180E</li>
 				<li>Occupation: Student</li>
-				<li>Education: High School Graduation</li>
-				<li>Location: Hanoi, Vietnam</li>
+				<li>Email:<a target="_blank">thang.np225529@sis.hust.edu.vn</a> </li>
 			</ul>
+			
+
 
 			<h2>Role Description</h2>
 			<p style = "text-align: justify; padding-left: 30px; color: #252422;">
-				I build the Front-End of the Shoes Website. I am responsible fordesigning the user interface, ensuring that the website is visually good, user-friendly, and responsive across devices. I also implement interactive features and maintain consistency in the site's appearance.
+				I build the Back-end of the Shoes Website. 
 			</p>
 		</section>
 	</main>
