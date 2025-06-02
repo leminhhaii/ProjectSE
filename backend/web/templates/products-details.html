@@ -5,12 +5,21 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ shoe.shoe_name }} - Redstore</title>
+    <title>{{ shoe.shoe_name }} - Shoes Store</title>
     <link rel="stylesheet" href="{% static 'web/css/style.css' %}">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
+    <style>
+        select[name="size"] {
+            font-family: 'Poppins', sans-serif;
+        }
+        select[name="quantity"] {
+            font-family: 'Poppins', sans-serif;
+        }
+
+    </style>
 <body>
     <!-- Header giống aboutus.html -->
     <div class="header">
@@ -72,7 +81,7 @@
                 </form>
                 <h3>Product Details <i class="fa fa-indent"></i></h3>
                 <br>
-                <p>{{ shoe.description }}</p>
+                <p style = "text-align: justify;">{{ shoe.description }}</p>
             </div>
         </div>
     </div>
@@ -81,7 +90,7 @@
         <div class="row row-2">
             <h2>Related Products</h2>
             <!-- <h2 class="title">Related Products</h2> -->
-            <a href="{% url 'products' %}"><p>View More</p></a>
+            <a href="{% url 'products' %}" class = "btn">View More <strong>&#8594;</strong></a>
         </div>
         <div class="row">
             {% for prod in related_products %}

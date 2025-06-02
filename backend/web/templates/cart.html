@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Cart - Redstore</title>
+    <title>Your Cart - Shoes Store</title>
     <link rel="stylesheet" href="{% static 'web/css/style.css' %}">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
@@ -183,7 +183,7 @@
                 <tr>
                   <td colspan="2" style="text-align: right;">
                     {% if items %}
-                      <button class="btn" onclick="openPopup()">Check out</button>
+                      <button class="btn" onclick="openPopup()" style = "border: none;">Check out</button>
                     {% else %}
                       <button class="btn" disabled style="opacity: 0.6; cursor: not-allowed;">Check out</button>
                     {% endif %}
@@ -195,7 +195,7 @@
     </div>
 
     <!-- Footer -->
-    <div class="footer">
+    <div class="footer" style="position: fixed; left: 0; bottom: 0; width: 100%; margin-top: 0; z-index: 999;">
         <div class="container">
             <div class="footer-row">
                 <img src= "{% static 'web/images/logo.png' %}" alt="Logo" class="footer-logo">
@@ -229,7 +229,7 @@
 
           <div class="form-group">
             <label for="name">Họ và tên <span class="required">*</span></label>
-            <input type="text" name="name" id="name" placeholder="Nguyễn Văn A" required />
+            <input type="text" name="name" id="name" placeholder="Nguyễn Văn Minh" required />
           </div>
 
           <div class="form-group">
@@ -250,10 +250,10 @@
           <div class="form-group">
             <label for="payment">Phương thức thanh toán</label>
             <select id="payment" name="payment">
-              <option>Thẻ ghi nợ</option>
-              <option>Thẻ tín dụng</option>
-              <option>Chuyển khoản</option>
-              <option>Thanh toán khi nhận hàng</option>
+              <option>Debit card</option>
+              <option>Credit card</option>
+              <option>Bank Transfer</option>
+              <option>By cash</option>
             </select>
           </div>
 
@@ -287,11 +287,11 @@
       const phone = document.getElementById("phone").value.trim();
 
       if (!name || !address || !phone) {
-        alert("Vui lòng điền đầy đủ các trường bắt buộc.");
+        alert("Vui lòng điền đầy đủ các thông tin bắt buộc.");
         return false;
       }
 
-      alert("Đặt hàng thành công! Cảm ơn bạn đã mua sắm.");
+      alert("Đặt hàng thành công! Cảm ơn bạn đã ủng hộ chúng mình.");
       return true; // Để không reload trang
     }
 
