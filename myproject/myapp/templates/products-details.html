@@ -1,0 +1,170 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ shoe.shoe_name }} - Shoes Store</title>
+    <link rel="stylesheet" href="{% static 'web/css/style.css' %}">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+    <style>
+        select[name="size"] {
+            font-family: 'Poppins', sans-serif;
+        }
+        select[name="quantity"] {
+            font-family: 'Poppins', sans-serif;
+        }
+
+    </style>
+<body>
+        <div class="header">
+        <div class="container">
+            
+            <div class="navbar">
+                <div class="logo">
+                    <a href="{% url 'home' %}"><img src="{% static 'web/images/logo.png' %}" width="125px"></a>
+                </div>
+                <nav>
+                    <ul id="MenuItems">
+                        <li><a href="{% url 'products_men' %}" class="btn">Men</a></li>
+                        <li><a href="{% url 'products_women' %}"  class="btn">Women</a></li>
+                        <li><a href="{% url 'products' %}" class="btn">All</a></li>
+                        <li><a href="{% url 'aboutus' %}" class="btn">About Us</a></li>
+                    </ul>
+                </nav>
+                <form class="search-bar" method="get" action="{% url 'products' %}" >
+                    <input type="text" name="q" placeholder="Search for products..." value="{{ search_query|default:'' }}">
+                    <button type="submit" class="btn"><i class="fa fa-search"></i></button>
+                </form>
+                <a href="{% url 'view_cart' %}" class="btn" id="cart-btn"><img src="{% static 'web/images/cart.png' %}" width="30px" height="30px"></a>
+                <img src="{% static 'web/images/menu.png' %}" class="menu-icon" onClick="menutoggle()">
+            </div>
+        </div>
+    </div>
+
+    <div class="small-container single-product">
+        <div class="row" style="justify-content: flex-start; text-align: left;">
+            <div class="col-2">
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                {% if shoe.shoeimages_set.all %}
+                    <img src="{{ shoe.shoeimages_set.all.0.image.url }}" alt="{{ shoe.shoe_name }}" width="100%" id="productImg">
+                {% else %}
+                    <p>Không có ảnh</p>
+                {% endif %}
+                <div class="img-row">
+                    {% for image in shoe.shoeimages_set.all %}
+                        <img src="{{ image.image.url }}" alt="{{ shoe.shoe_name }}" width="60" class="small-img" style="margin:5px;cursor:pointer;">
+                    {% endfor %}
+                </div>
+                
+            </div>
+            <div class="col-2">
+                <h1>{{ shoe.shoe_name }}</h1>
+                <h4>{{ shoe.original_price|intcomma }} VNĐ</h4>
+                <form method="post" action="{% url 'add_to_cart' sku=shoe.sku %}">
+                    {% csrf_token %}
+                    <select name="size" id="size-select" required>
+                        <option value="">Select Size</option>
+                        {% for size in shoe.availablesizes_set.all %}
+                            <option value="{{ size.size }}" data-stock="{{ size.in_stock|default:0 }}"
+                                {% if size.in_stock == 0 %}disabled{% endif %}>
+                                {{ size.size }}{% if size.in_stock is not None %}{% endif %}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <input type="number" name="quantity" value="1" min="1" id="quantity-input">
+                    <button type="submit" class="btn" id="add-to-cart-btn">Add to Cart</button>
+                    
+                </form>
+                <h3>Product Details <i class="fa fa-indent"></i></h3>
+                <br>
+                <p style = "text-align: justify;">{{ shoe.description }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Related Products Section (chỉ 1 lần, đặt ở cuối) -->
+    <div class="small-container">
+        <div class="row row-2">
+            <h2>Related Products</h2>
+            <!-- <h2 class="title">Related Products</h2> -->
+            <a href="{% url 'products' %}" class = "btn">View More <strong>&#8594;</strong></a>
+        </div>
+        <div class="row">
+            {% for prod in related_products %}
+            <div class="col-4">
+                <a href="{{ prod.get_absolute_url }}">
+                    {% if shoe.shoeimages_set.first %}
+                        <img src="{{ shoe.shoeimages_set.first.image.url }}" alt="{{ shoe.shoe_name }}">
+                    {% else %}
+                        <img src="{% static 'web/images/no-image.png' %}" alt="No image">
+                    {% endif %}
+                </a>
+                <a href="{{ prod.get_absolute_url }}"><h4>{{ prod.shoe_name }}</h4></a>
+                <p>{{ prod.original_price|intcomma }} VNĐ</p>
+            </div>
+            {% empty %}
+            <p>No related products found.</p>
+            {% endfor %}    
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <div class="footer">
+        <div class="container">
+            <div class="footer-row">
+                <img src= "{% static 'web/images/logo.png' %}" alt="Logo" class="footer-logo">
+
+                <ul class="footer-social">
+                    <a href="https://www.facebook.com/">
+                        <li><strong>Facebook</strong></li>
+                    </a>
+                    <a href="https://www.instagram.com/">
+                        <li><strong>Instagram</strong></li>
+                    </a>
+                    <a href="https://x.com/">
+                        <li><strong>X</strong></li>
+                    </a>
+                    <a href="https://www.youtube.com/">
+                        <li><strong>Youtube</strong></li>
+                    </a>
+                </ul>
+            </div>
+            <hr>
+            <p class="copyright">Capstone Project Intro to Software - IT3180E</p>
+        </div>
+    </div>
+
+    <!-- JS -->
+    <script>
+        var menuItems=document.getElementById("MenuItems");
+        menuItems.style.maxHeight="0px";
+        function menutoggle(){
+            if(menuItems.style.maxHeight == "0px"){
+                menuItems.style.maxHeight="200px";
+            }
+            else{
+                menuItems.style.maxHeight="0px";
+            }
+        }
+        // Product gallery
+        var productImg = document.getElementById("productImg");
+        var smallImg = document.getElementsByClassName("small-img");
+        for (let i = 0; i < smallImg.length; i++) {
+            smallImg[i].onclick = function() {
+                productImg.src = this.src;
+            }
+        }
+    </script>
+</body>
+</html>

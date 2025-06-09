@@ -1,0 +1,162 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width-device-width, initial-scale=1.0">
+    <title>Shoes Store</title>
+    <link rel="stylesheet" href="{% static 'web/css/style.css' %}">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+    <div class="header">
+        <div class="container">
+            <div class="navbar">
+                <div class="logo">
+                    <a href="{% url 'home' %}"><img src="{% static 'web/images/logo.png' %}" width="125px"></a>
+                </div>
+                <nav>
+                    <ul id="MenuItems">
+                        <li><a href="{% url 'products_men' %}" class="btn">Men</a></li>
+                        <li><a href="{% url 'products_women' %}"  class="btn">Women</a></li>
+                        <li><a href="{% url 'products' %}" class="btn">All</a></li>
+                        <li><a href="{% url 'aboutus' %}" class="btn">About Us</a></li>
+                    </ul>
+                </nav>
+                <form class="search-bar" method="get" action="{% url 'products' %}">
+                    <input type="text" name="q" placeholder="Search for products..." value="{{ search_query|default:'' }}">
+                    <button type="submit" class="btn"><i class="fa fa-search"></i></button>
+                </form>
+                <a href="{% url 'view_cart' %}" class="btn" id="cart-btn"><img src="{% static 'web/images/cart.png' %}" width="30px" height="30px"></a>
+                <img src="{% static 'web/images/menu.png' %}" class="menu-icon" onClick="menutoggle()">
+            </div>
+
+            <div class="row">
+                <div class="col-2">
+                    <center><h1 class = "header-title" style = "font-size: 50px;">History</h1></center>
+                    <p style = "text-align: justify; padding-right: 30px; font-size: large;">Sneakers began as athletic footwear in the late 1800s, designed for comfort and performance. By the 20th century, brands like Converse, Adidas, and Nike turned them into icons. Over time, sneakers evolved beyond sports — becoming symbols of fashion, culture, and self-expression. Today, they bridge the gap between utility and style, worn by athletes, artists, and everyday people alike.</p>
+                    <br>
+                    <p style = "text-align: justify; padding-right: 30px; font-size: large;"><strong style="color: black;"> Fun Fact: </strong> Ronaldo has bought here, how about you?</p>
+                    <a href="{% url 'products' %}" class="btn">Explore Now &#8594;</a>
+                </div>
+                <div class="col-2">
+                    <img src="{% static 'web/images/cr7.png' %}" style="width:200%; max-width:700px; height:auto;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <!-- Featured Products -->
+    <div class="small-container">
+        <h2 class="title" style="margin-top:20px; text-align:left;">Featured Products</h2>
+        <div class="row" style="text-align:left;">
+            {% for shoe in featured_shoes %}
+            <div class="col-4">
+                <a href="{% url 'products_details' sku=shoe.sku %}">
+                    {% if shoe.shoeimages_set.first %}
+                        <img src="{{ shoe.shoeimages_set.first.image.url }}" alt="{{ shoe.shoe_name }}">
+                    {% else %}
+                        <img src="{% static 'web/images/no-image.png' %}" alt="No image">
+                    {% endif %}
+                </a>
+                <a href="{% url 'products_details' sku=shoe.sku %}"><h4>{{ shoe.shoe_name }}</h4></a>
+                <p>{{ shoe.original_price|intcomma }} VNĐ</p>
+            </div>
+            {% empty %}
+            <p>No featured products available.</p>
+            {% endfor %}
+        </div>
+
+        <h2 class="title" style="margin-bottom: 20px; text-align:left;">Latest Products</h2>
+        <div class="row" style="text-align:left;">
+            {% for shoe in latest_shoes %}
+            <div class="col-4">
+                <a href="{% url 'products_details' sku=shoe.sku %}">
+                    {% if shoe.shoeimages_set.first %}
+                        <img src="{{ shoe.shoeimages_set.first.image.url }}" alt="{{ shoe.shoe_name }}">
+                    {% else %}
+                        <img src="{% static 'web/images/no-image.png' %}" alt="No image">
+                    {% endif %}
+                </a>
+                <a href="{% url 'products_details' sku=shoe.sku %}"><h4>{{ shoe.shoe_name }}</h4></a>
+                <p>{{ shoe.original_price|intcomma }} VNĐ</p>
+            </div>
+            {% empty %}
+            <p>No latest products available.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!--------------------------`   offer   --------------------------------->
+    <div class="offer">
+    <div class="small-container">
+        <div class="row" style="justify-content: flex-start;">
+            <div class="col-2">
+                <img src="{% static 'web/images/pixelcut-export (6).webp' %}" class="offer-img">
+            </div>
+            <div class="col-2" style="text-align: left;">
+                <h1>Men Shoes</h1>
+                <small>Buy the lastest men's shoes with the best price! Varies from different brands: Nike, Adidas, Puma,...</small><br>
+                <a href="{% url 'products' %}" class="btn">Buy Now &#8594;</a>
+            </div>
+        </div>
+    </div>
+</div>
+    <!-- Footer -->
+    <div class="footer">
+        <div class="container">
+            <div class="footer-row">
+                <img src= "{% static 'web/images/logo.png' %}" alt="Logo" class="footer-logo">
+
+                <ul class="footer-social">
+                    <a href="https://www.facebook.com/">
+                        <li><strong>Facebook</strong></li>
+                    </a>
+                    <a href="https://www.instagram.com/">
+                        <li><strong>Instagram</strong></li>
+                    </a>
+                    <a href="https://x.com/">
+                        <li><strong>X</strong></li>
+                    </a>
+                    <a href="https://www.youtube.com/">
+                        <li><strong>Youtube</strong></li>
+                    </a>
+                </ul>
+            </div>
+            <hr>
+            <p class="copyright">Capstone Project Intro to Software - IT3180E</p>
+        </div>
+    </div>
+
+    <!-- JS for toggle menu -->
+    <script>
+        var menuItems = document.getElementById("MenuItems");
+
+        MenuItems.style.maxHeight = "0px";
+        function menutoggle() {
+            if (MenuItems.style.maxHeight == "0px") {
+                MenuItems.style.maxHeight = "200px";
+            }
+            else {
+                MenuItems.style.maxHeight = "0px";
+            }
+        }
+        // var submit = document.getElementById("submit");
+        // submit.addEventListener("click", function () {
+        //     var searchInput = document.querySelector(".search-bar input");
+        //     var searchQuery = searchInput.value;
+        //     if (searchQuery) {
+        //         window.location.href = "products.html";
+        //     }
+        // });
+    </script>
+</body>
+
+</html>

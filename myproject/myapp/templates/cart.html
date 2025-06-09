@@ -1,0 +1,300 @@
+{% load static %}
+{% load cart_extras %}
+{% load humanize %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart - Shoes Store</title>
+    <link rel="stylesheet" href="{% static 'web/css/style.css' %}">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<style>
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.4);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      animation: fadeIn 0.3s ease;
+      z-index: 1000;
+    }
+
+    .popup {
+      background-color: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 500px;
+      animation: slideIn 0.4s ease;
+      position: relative;
+    }
+
+    .popup h2 {
+      margin-bottom: 20px;
+      text-align: center;
+      color: #ff523b;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .form-group label .required {
+      color: red;
+      margin-left: 4px;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: #ff523b;
+      outline: none;
+    }
+
+    .popup .btn {
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #888;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .close-btn:hover {
+      color: #ff523b;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateY(-40px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        background: rgba(0, 0, 0, 0);
+      }
+      to {
+        background: rgba(0, 0, 0, 0.4);
+      }
+    }
+</style>
+<body>
+    <div class="header">
+        <div class="container">
+            
+            <div class="navbar">
+                <div class="logo">
+                    <a href="{% url 'home' %}"><img src="{% static 'web/images/logo.png' %}" width="125px"></a>
+                </div>
+                <nav>
+                    <ul id="MenuItems">
+                        <li><a href="{% url 'products_men' %}" class="btn">Men</a></li>
+                        <li><a href="{% url 'products_women' %}"  class="btn">Women</a></li>
+                        <li><a href="{% url 'products' %}" class="btn">All</a></li>
+                        <li><a href="{% url 'aboutus' %}" class="btn">About Us</a></li>
+                    </ul>
+                </nav>
+                <form class="search-bar" method="get" action="{% url 'products' %}">
+                    <input type="text" name="q" placeholder="Search for products..." value="{{ search_query|default:'' }}">
+                    <button type="submit" class="btn"><i class="fa fa-search"></i></button>
+                </form>
+                <a href="{% url 'view_cart' %}" class="btn" id="cart-btn"><img src="{% static 'web/images/cart.png' %}" width="30px" height="30px"></a>
+                <img src="{% static 'web/images/menu.png' %}" class="menu-icon" onClick="menutoggle()">
+            </div>
+        </div>
+    </div>
+    
+
+    <!-- Cart Items Details -->
+    <div class="small-container cart-page">
+        <table>
+            <tr>
+                <th>Product</th>
+                <th>Size</th>
+                <th>Quantity</th>
+                <th>Total</th>
+            </tr>
+            {% for item in items %}
+            <tr>
+                <td>
+                    <div class="cart-info" style="text-align: left;">
+                        {% if item.product.shoeimages_set.first %}
+                        <img src="{{ item.product.shoeimages_set.first.image.url }}" alt="{{ item.product.shoe_name }}">
+                        {% endif %}
+                        <div>
+                            <p>{{ item.product.shoe_name }}</p>
+                            <small>Price: {{ item.product.original_price|intcomma }} VNĐ</small><br>
+                            <a href="{% url 'remove_from_cart' key=item.key %}">Remove</a>
+                        </div>
+                    </div>
+                </td>
+                <td>{{ item.size }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.subtotal|intcomma }} VNĐ</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">Your cart is empty.</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <div class="total-price">
+            <table>
+                <tr>
+                    <td>Total</td>
+                    <td>
+                        {{ total|intcomma }} VNĐ
+                    </td>
+                </tr>
+                <tr>
+                  <td colspan="2" style="text-align: right;">
+                    {% if items %}
+                      <button class="btn" onclick="openPopup()" style = "border: none;">Check out</button>
+                    {% else %}
+                      <button class="btn" disabled style="opacity: 0.6; cursor: not-allowed;">Check out</button>
+                    {% endif %}
+                  </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer" style="position: fixed; left: 0; bottom: 0; width: 100%; margin-top: 0; z-index: 999;">
+        <div class="container">
+            <div class="footer-row">
+                <img src= "{% static 'web/images/logo.png' %}" alt="Logo" class="footer-logo">
+
+                <ul class="footer-social">
+                    <a href="https://www.facebook.com/">
+                        <li><strong>Facebook</strong></li>
+                    </a>
+                    <a href="https://www.instagram.com/">
+                        <li><strong>Instagram</strong></li>
+                    </a>
+                    <a href="https://x.com/">
+                        <li><strong>X</strong></li>
+                    </a>
+                    <a href="https://www.youtube.com/">
+                        <li><strong>Youtube</strong></li>
+                    </a>
+                </ul>
+            </div>
+            <hr>
+            <p class="copyright">Capstone Project Intro to Software - IT3180E</p>
+        </div>
+    </div>
+
+    <div class="overlay" id="popupOverlay">
+        <div class="popup">
+        <span class="close-btn" onclick="closePopup()">×</span>
+        <h2>Checkout</h2>
+        <form method="post" action="{% url 'checkout' %}" onsubmit="return validateCheckout()">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="name">Họ và tên <span class="required">*</span></label>
+            <input type="text" name="name" id="name" placeholder="Nguyễn Văn Minh" required />
+        </div>
+
+        <div class="form-group">
+            <label for="total">Tổng số tiền thanh toán</label>
+            <input type="text" id="total" value="{{ total|intcomma }} VNĐ" readonly />
+        </div>
+
+        <div class="form-group">
+            <label for="address">Địa chỉ nhận hàng <span class="required">*</span></label>
+            <input type="text" name="address" id="address" placeholder="Số 1 Đại Cồ Việt..." required />
+        </div>
+
+        <div class="form-group">
+            <label for="phone">Số điện thoại <span class="required">*</span></label>
+            <input type="text" name="phone" id="phone" placeholder="0123 456 789" required />
+        </div>
+
+        <div class="form-group">
+            <label for="payment">Phương thức thanh toán</label>
+            <select id="payment" name="payment">
+            <option>Debit card</option>
+            <option>Credit card</option>
+            <option>Bank Transfer</option>
+            <option>By cash</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn">Xác nhận thanh toán</button>
+        </form>
+        </div>
+    </div>
+    <script>
+    function openPopup() {
+    document.getElementById("popupOverlay").style.display = "flex";
+    }
+
+    function closePopup() {
+    document.getElementById("popupOverlay").style.display = "none";
+    }
+
+    function validateCheckout() {
+    const name = document.getElementById("name").value.trim();
+    const address = document.getElementById("address").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+
+    if (!name || !address || !phone) {
+        alert("Vui lòng điền đầy đủ các thông tin bắt buộc.");
+        return false;
+    }
+    // Không alert thành công ở đây, để backend xử lý
+    return true;
+    }
+
+    // Đóng popup khi click ra ngoài
+    window.addEventListener('click', function(e) {
+    const overlay = document.getElementById("popupOverlay");
+    if (e.target === overlay) {
+        closePopup();
+    }
+    });
+    </script>
+    
+</body>
+</html>
