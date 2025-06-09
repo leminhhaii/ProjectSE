@@ -11,6 +11,10 @@ class AvailableSizesInline(admin.TabularInline):
     fields = ('size', 'in_stock')   
     verbose_name = "Available Sizes and Stock"
     verbose_name_plural = "Add available Sizes and Stock"
+    formfield_overrides = {
+        models.TextField: {'widget': forms.Textarea(attrs={'rows': 2, 'cols': 40})},
+        models.ImageField: {'widget': forms.ClearableFileInput(attrs={'style': 'width: 200px'})},
+    }
 
 class ShoeImagesInline(admin.TabularInline):
     model = ShoeImages
@@ -22,8 +26,9 @@ class ShoesAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Shoes._meta.fields if field.name != 'sku']
     inlines = [AvailableSizesInline, ShoeImagesInline]
     formfield_overrides = {
-        models.TextField: {'widget': forms.Textarea(attrs={'rows': 2, 'cols': 40})},
+        models.TextField: {'widget': forms.Textarea(attrs={'rows': 2, 'cols': 60})},
         models.ImageField: {'widget': forms.ClearableFileInput(attrs={'style': 'width: 200px'})},
+        models.IntegerField: {'widget': forms.NumberInput(attrs={'style': 'width: 200px'})},
     }
     
 

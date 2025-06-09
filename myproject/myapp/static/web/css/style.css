@@ -816,7 +816,6 @@ form a {
     background: #f1f1f1;
     color: #333;
     border-radius: 6px;
-    border: 1px solid #ddd;
     text-decoration: none;
     font-weight: 500;
     transition: background 0.2s, color 0.2s, border 0.2s;
