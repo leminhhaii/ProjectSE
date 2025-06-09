@@ -102,10 +102,10 @@
         </div>
         <div class="row">
             {% for prod in related_products %}
-            <div class="col-4">
+            <div class="col-4" style="text-align: left;">
                 <a href="{{ prod.get_absolute_url }}">
-                    {% if shoe.shoeimages_set.first %}
-                        <img src="{{ shoe.shoeimages_set.first.image.url }}" alt="{{ shoe.shoe_name }}">
+                    {% if prod.shoeimages_set.first %}
+                        <img src="{{ prod.shoeimages_set.first.image.url }}" alt="{{ prod.shoe_name }}">
                     {% else %}
                         <img src="{% static 'web/images/no-image.png' %}" alt="No image">
                     {% endif %}
