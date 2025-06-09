@@ -7,7 +7,7 @@ from django.core.paginator import Paginator
 
 
 def all_products(request):
-    shoes = Shoes.objects.all().prefetch_related('availablesizes_set', 'shoeimages_set')
+    shoes = Shoes.objects.filter(availablesizes__in_stock__gt=0).prefetch_related('availablesizes_set', 'shoeimages_set').distinct()
     search_query = request.GET.get('q', '').strip()
     sort = request.GET.get('sort', '')
     brand = request.GET.get('brand', '')
@@ -39,8 +39,8 @@ def all_products(request):
         shoes = shoes.order_by('type')
 
     # Lấy danh sách brand và type duy nhất
-    brands = Shoes.objects.values_list('brand', flat=True).distinct()
-    types = Shoes.objects.values_list('type', flat=True).distinct()
+    brands = Shoes.objects.values_list('brand', flat=True).filter(availablesizes__in_stock__gt=0).distinct()
+    types = Shoes.objects.values_list('type', flat=True).filter(availablesizes__in_stock__gt=0).distinct()
 
     paginator = Paginator(shoes, 16) 
     page_number = request.GET.get('page')
@@ -87,7 +87,9 @@ def add_to_cart(request, sku):
         messages.error(request, f"Size {size} chỉ còn {size_obj.in_stock} sản phẩm!")
         return redirect('products_details', sku=sku)
 
-    key = f"{sku}_{size}"
+    safe_size = str(size).replace('/', '_')
+    key = f"{sku}_{safe_size}"
+
     if key in cart:
         cart[key]['quantity'] += quantity
     else:
@@ -152,7 +154,8 @@ def checkout(request):
         total = 0
         items = []
         for key, item in cart.items():
-            sku, size = key.split('_', 1)
+            sku = item['sku']
+            size = item['size'] 
             try:
                 product = Shoes.objects.get(sku=sku)
             except Shoes.DoesNotExist:
@@ -172,8 +175,8 @@ def checkout(request):
 
 
 def home(request):
-    featured_shoes = Shoes.objects.all().order_by('-original_price')[:4]
-    latest_shoes = Shoes.objects.all().order_by('-sku')[:8]
+    featured_shoes = Shoes.objects.filter(availablesizes__in_stock__gt=0).order_by('-original_price').distinct()[:4]
+    latest_shoes = Shoes.objects.filter(availablesizes__in_stock__gt=0).order_by('-sku').distinct()[:8]
     context = {
 		'featured_shoes': featured_shoes,
 		'latest_shoes': latest_shoes,
@@ -181,7 +184,7 @@ def home(request):
     return render(request, 'index.html', context)
 
 def products_men(request):
-    shoes = Shoes.objects.filter(gender__iexact='Nam').prefetch_related('availablesizes_set', 'shoeimages_set')
+    shoes = Shoes.objects.filter(gender__iexact='Nam', availablesizes__in_stock__gt=0).prefetch_related('availablesizes_set', 'shoeimages_set').distinct()
     search_query = request.GET.get('q', '').strip()
     sort = request.GET.get('sort', '')
     brand = request.GET.get('brand', '')
@@ -212,8 +215,8 @@ def products_men(request):
     elif sort == 'type':
         shoes = shoes.order_by('type')
 
-    brands = Shoes.objects.filter(gender__iexact='Nam').values_list('brand', flat=True).distinct()
-    types = Shoes.objects.filter(gender__iexact='Nam').values_list('type', flat=True).distinct()
+    brands = Shoes.objects.filter(gender__iexact='Nam', availablesizes__in_stock__gt=0).values_list('brand', flat=True).distinct()
+    types = Shoes.objects.filter(gender__iexact='Nam', availablesizes__in_stock__gt=0).values_list('type', flat=True).distinct()
 
     paginator = Paginator(shoes, 16)
     page_number = request.GET.get('page')
@@ -232,7 +235,7 @@ def products_men(request):
     })
 
 def products_women(request):
-    shoes = Shoes.objects.filter(gender__iexact='Nữ').prefetch_related('availablesizes_set', 'shoeimages_set')
+    shoes = Shoes.objects.filter(gender__iexact='Nữ', availablesizes__in_stock__gt=0).prefetch_related('availablesizes_set', 'shoeimages_set').distinct()
     search_query = request.GET.get('q', '').strip()
     sort = request.GET.get('sort', '')
     brand = request.GET.get('brand', '')
@@ -263,8 +266,8 @@ def products_women(request):
     elif sort == 'type':
         shoes = shoes.order_by('type')
 
-    brands = Shoes.objects.filter(gender__iexact='Nữ').values_list('brand', flat=True).distinct()
-    types = Shoes.objects.filter(gender__iexact='Nữ').values_list('type', flat=True).distinct()
+    brands = Shoes.objects.filter(gender__iexact='Nữ', availablesizes__in_stock__gt=0).values_list('brand', flat=True).distinct()
+    types = Shoes.objects.filter(gender__iexact='Nữ', availablesizes__in_stock__gt=0).values_list('type', flat=True).distinct()
 
     paginator = Paginator(shoes, 16)
     page_number = request.GET.get('page')

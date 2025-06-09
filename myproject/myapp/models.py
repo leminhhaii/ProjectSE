@@ -30,14 +30,14 @@ class Shoes(models.Model):
     #     db_table = 'myapp_shoes'
     
 class ShoeImages(models.Model):
-    sku = models.ForeignKey(Shoes, models.DO_NOTHING, db_column='sku')
+    sku = models.ForeignKey(Shoes, on_delete=models.CASCADE, db_column='sku')
     image = CloudinaryField('image', blank=True, null=True)
 
     # class Meta:
     #     db_table = 'myapp_shoeimages'
 
 class AvailableSizes(models.Model):
-    sku = models.ForeignKey(Shoes, models.DO_NOTHING, db_column='sku')
+    sku = models.ForeignKey(Shoes, on_delete=models.CASCADE, db_column='sku')
     size = models.TextField(blank=True, null=True)
     in_stock = models.IntegerField(blank=True, null=True)
 

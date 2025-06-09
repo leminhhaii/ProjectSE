@@ -25,11 +25,16 @@ class ShoeImagesInline(admin.TabularInline):
 class ShoesAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Shoes._meta.fields if field.name != 'sku']
     inlines = [AvailableSizesInline, ShoeImagesInline]
+    list_filter = ('gender', 'type', 'brand')
+    search_fields = ('shoe_name', 'brand', 'type')
     formfield_overrides = {
         models.TextField: {'widget': forms.Textarea(attrs={'rows': 2, 'cols': 60})},
         models.ImageField: {'widget': forms.ClearableFileInput(attrs={'style': 'width: 200px'})},
         models.IntegerField: {'widget': forms.NumberInput(attrs={'style': 'width: 200px'})},
     }
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.filter(availablesizes__in_stock__gt=0).distinct()
     
 
 class OrderItemInline(admin.TabularInline):
